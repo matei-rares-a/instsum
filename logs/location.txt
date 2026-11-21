@@ -1,0 +1,5 @@
+C:\ProgramData\NVIDIA Corporation\NVIDIA app\UpdateFramework\ota-artifacts\grd\post-processing\b7dcbea8995bd4e44ec455b8b42d1725\Display.Driver
+C:\ProgramData\NVIDIA Corporation\NVIDIA app\UpdateFramework\ota-artifacts\grd\post-processing\e247b6c498005d267ca1670bb7bdcd07\Display.Driver
+C:\Windows\LastGood\system32
+C:\Windows\System32\DriverStore\FileRepository\nv_dispi.inf_amd64_feedb8c0271ca811
+C:\Windows\System32\DriverStore\FileRepository\nvlti.inf_amd64_bfa81f62470581d3
