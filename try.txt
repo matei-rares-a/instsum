@@ -1,43 +1,71 @@
-TEST NVIDIA-SMI SI SETUP
+DIAGNOSTIC DUPA INSTALARE
 
-1. Pe calculatorul unde rulezi aplicatia, deschide PowerShell.
-   Copiaza si executa aceste doua linii:
+Rezultatul anterior este partial: descarcarea, metadatele si cadrele au
+functionat, dar transcrierea, OCR si modelul vizual nu au fost finalizate.
+Pasii de mai jos strang informatii si retesteaza GPU-ul; nu repara inca
+problemele ASR si OCR. Nu este necesar sa rulezi setup.bat din nou.
+
+1. Deschide PowerShell pe calculatorul cu RTX 3080. Copiaza aceste linii:
 
 cd 'D:\aaaa\git\instsum'
 $p = 'C:\Windows\System32\DriverStore\FileRepository\nv_dispi.inf_amd64_feedb8c0271ca811'
-
-2. Copiaza si executa linia urmatoare:
-
 & "$p\nvidia-smi.exe"
 
-3. Daca apare un tabel NVIDIA cu placa video, copiaza si executa:
+Trebuie sa vezi GTX 1650 la index 0 si RTX 3080 la index 1. Daca apare o
+eroare sau indexul RTX 3080 este diferit, opreste-te si trimite eroarea sau
+tabelul; nu continua pana nu verificam configuratia GPU.
+
+2. In ACEEASI fereastra, adauga temporar NVIDIA in PATH:
 
 $env:PATH = "$p;$env:PATH"
-.\setup.bat
+nvidia-smi --query-gpu=index,name,memory.total,memory.used --format=csv,noheader,nounits
 
-   Modificarea PATH este temporara, doar pentru aceasta fereastra.
-   Setup va cere confirmare inainte de descarcari. Nu inchide fereastra.
+Daca nu apare tabelul cu ambele placi, opreste-te si trimite eroarea.
+Modificarea PATH ramane doar in aceasta fereastra si in procesele pornite
+din ea; nu modifica PATH-ul permanent al Windows.
 
-4. Setup afiseaza indexul placii eligibile. Pentru a folosi aceeasi placa la
-   inferenta, deschide configuratia:
+3. Diagnostic OCR. Copiaza TOT blocul de mai jos in aceeasi fereastra.
+Foloseste primul cadru din rularea anterioara, fara sa il modifice.
+La final afiseaza directorul in care sunt salvate rezultatele si erorile.
 
-notepad .\configs\config.yaml
+$runtime = Join-Path (Get-Location).Path 'runtime\setup-v1'
+$prefix = Join-Path $runtime 'env'
+$env:PATH = (Join-Path $prefix 'Library\bin') + ';' + (Join-Path $prefix 'Scripts') + ';' + $prefix + ';' + $env:PATH
+$env:TESSDATA_PREFIX = Join-Path $runtime 'tessdata'
+$tess = Join-Path $prefix 'Library\bin\tesseract.exe'
+$frame = Join-Path (Get-Location).Path 'out\run-2251928235\media-1\frame_000001.jpg'
+if (-not (Test-Path -LiteralPath $tess -PathType Leaf)) { throw "Nu gasesc Tesseract: $tess" }
+if (-not (Test-Path -LiteralPath $frame -PathType Leaf)) { throw "Nu gasesc cadrul: $frame" }
+$diag = Join-Path (Get-Location).Path ('logs\diagnostic-ocr-' + [guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $diag -ErrorAction Stop | Out-Null
+$quotedFrame = '"' + $frame + '"'
+$a = Start-Process -FilePath $tess -ArgumentList @($quotedFrame, 'stdout', '-l', 'ron+eng', 'tsv') -NoNewWindow -Wait -PassThru -RedirectStandardOutput (Join-Path $diag 'tsv-stdout.txt') -RedirectStandardError (Join-Path $diag 'tsv-stderr.txt')
+$b = Start-Process -FilePath $tess -ArgumentList @($quotedFrame, 'stdout', '-l', 'ron+eng', '-c', 'tessedit_create_tsv=1') -NoNewWindow -Wait -PassThru -RedirectStandardOutput (Join-Path $diag 'direct-stdout.txt') -RedirectStandardError (Join-Path $diag 'direct-stderr.txt')
+@("TSV exit code: $($a.ExitCode)", "Direct exit code: $($b.ExitCode)", "TESSDATA_PREFIX: $env:TESSDATA_PREFIX") | Set-Content -LiteralPath (Join-Path $diag 'status.txt')
+Write-Host "Diagnostic OCR salvat in: $diag"
+Get-ChildItem -LiteralPath $diag | Select-Object Name,Length
+Get-Content -LiteralPath (Join-Path $diag 'status.txt')
+Get-Content -LiteralPath (Join-Path $diag 'tsv-stderr.txt')
+Get-Content -LiteralPath (Join-Path $diag 'direct-stderr.txt')
 
-   La sectiunea gpu, modifica device la indexul afisat pentru RTX 3080.
-   De exemplu, daca setup afiseaza index 1:
+Daca blocul da o eroare, copiaza mesajul si nu presupune ca testul a reusit.
+Testul compara cele doua moduri de a solicita TSV; nu schimba instalarea.
 
-  device: 1
-
-   Salveaza si inchide Notepad. Dupa instalare, porneste aplicatia din
-   aceeasi fereastra PowerShell, astfel incat sa pastreze PATH temporar:
+4. Tot in aceeasi fereastra, reporneste aplicatia:
 
 .\start.bat
 
-5. Daca la pasul 2 apare o eroare, nu executa pasul 3.
-   Copiaza eroarea sau trimite o captura. Nu stim inca daca acel director
-   contine versiunea activa a driverului.
+Va refolosi URL-ul din start-url.txt si va descarca din nou postarea.
+Asteapta pana se termina si apasa o tasta la mesajul de final.
+Rezultatul poate ramane partial, chiar daca GPU-ul porneste.
 
-6. Daca setup se opreste cu alta eroare, trimite cel mai nou fisier
-   logs\setup-*.log. Verifica jurnalul inainte de a-l trimite: poate
-   contine cai personale sau alte date sensibile. Nu trimite parole,
-   cookie-uri sau token-uri.
+5. Trimite pentru analiza, dupa ce verifici continutul:
+- cel mai nou logs\instsum-*.log;
+- toate cele cinci fisiere din directorul diagnostic-ocr afisat la pasul 3;
+- result.json si result.md din noul director out\run-... afisat la pasul 4;
+- llama-server.log din acel director, daca exista.
+
+Jurnalele si rezultatele pot contine cai personale, URL-uri, text extras si
+continutul postarii. Verifica si elimina datele sensibile inainte de trimitere;
+nu trimite parole, cookie-uri sau token-uri. Fisierele logs si unele fisiere
+out sunt urmarite in Git in acest repository: nu le comite automat.
