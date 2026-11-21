@@ -90,7 +90,7 @@ whisper/Paddle/VLM inference, target VRAM, quality evaluation and CUDA image
 acceptance. Milestone 10 remains intentionally deferred. These gates must not
 be described as completed by the offline suite.
 
-## Proposed Windows launcher and diagnostics (awaiting approval)
+## Approved Windows launcher and diagnostics
 
 This addition does not change the pipeline, engine choice, local-first policy,
 sequential GPU scheduling or RTX 3080 memory budget above.
@@ -117,3 +117,7 @@ sequential GPU scheduling or RTX 3080 memory budget above.
    dependencies, launch failure and stderr are visible and logged with correct
    status; missing/unwritable log directory is surfaced. Test both direct and
    double-click-style invocation without accessing Instagram or a real model.
+
+Status: implemented and verified with Windows CLI/launcher tests, including the
+real Go build fallback and isolated startup, output and logging failures. Real
+Instagram, real inference and GPU acceptance remain separate live gates.

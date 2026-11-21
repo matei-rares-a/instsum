@@ -45,6 +45,10 @@ unloading shared models can disrupt other clients. Sampled GPU monitoring is
 diagnostic/cancellation protection, not proof of a hard between-sample VRAM cap.
 See the implementation/validation matrix in `README.md`; real-model accuracy,
 CUDA runtime compatibility and real-post evaluation remain separate gates.
+The approved Windows launcher accepts an Instagram URL interactively and writes
+per-run local diagnostic logs without changing engine selection or downloading
+dependencies. Logs can contain sensitive subprocess output and must be reviewed
+before sharing. Logging failures must be visible to the user.
 
 This is the primary project specification, not a step-by-step script. It is VERY
 IMPORTANT that you:

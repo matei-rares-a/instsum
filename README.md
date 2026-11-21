@@ -45,6 +45,26 @@ ffmpeg/ffprobe and Tesseract. These checks do not certify live models.
 
 ## Run
 
+### Windows launcher
+
+Double-click `start.bat`, paste the Instagram URL and press Enter. The window
+stays open when the run finishes. The launcher uses `instsum.exe` in the project
+root if present; otherwise it requires Go 1.23+ on PATH and builds a temporary
+executable. It uses the existing configuration and does not install dependencies
+or start Ollama. ffmpeg, downloaders, recognition tools and an inference backend
+still need to be configured as described below.
+
+Each invocation writes a separate `logs/instsum-*.log` containing startup
+diagnostics, application output, warnings and exit code; the window prints its
+path. Results still go to the configured output directory. Code 2 means a partial
+result, not a complete run. If the log cannot be created or written, the error
+is shown in the window; abrupt termination or filesystem failure can prevent
+recording diagnostics.
+
+Logs can contain private paths, URLs or other sensitive information emitted by
+external tools. Review and remove sensitive information before sharing a log;
+never share cookies, passwords or tokens. Logs are excluded from Git.
+
 Install Go 1.23+, then `go test ./...` and `go build -o instsum ./cmd/instsum`.
 Run from the repository root. For a completely offline demonstration using a
 local image, set `IGX_VLM_ENGINE=ollama` and `IGX_OLLAMA_MODE=stub`, then run

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"flag"
+	"fmt"
 	"image"
 	"image/jpeg"
 	"os"
@@ -14,6 +15,14 @@ import (
 )
 
 func TestMain(m *testing.M) {
+	if os.Getenv("INSTSUM_TEST_LAUNCHER_HELPER") == "1" {
+		fmt.Fprintln(os.Stdout, "argument:", os.Args[1])
+		fmt.Fprintln(os.Stderr, "diagnostic from stderr")
+		if os.Getenv("INSTSUM_TEST_PARTIAL") == "1" {
+			os.Exit(2)
+		}
+		os.Exit(0)
+	}
 	if os.Getenv("INSTSUM_TEST_CLI_HELPER") == "1" {
 		flag.CommandLine = flag.NewFlagSet("instsum", flag.ExitOnError)
 		main()

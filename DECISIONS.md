@@ -58,6 +58,10 @@ model accuracy, ONNX/CUDA ABI compatibility or peak VRAM.
 * Scoring and opt-in benchmark runners exist. Their synthetic examples are
   not the required real-post evaluation set. Batch, stage cache/resume and
   advanced optimization remain deferred, not implemented.
+* The Windows launcher prompts for a URL and records a separate local diagnostic
+  log per run. It does not change engine configuration or install dependencies.
+  Logs may contain sensitive subprocess diagnostics and require review before
+  sharing; the launcher reports log failures rather than pretending to record them.
 
 ## Validation boundaries
 
