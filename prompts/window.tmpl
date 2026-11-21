@@ -1,0 +1,10 @@
+Analyze this ordered media window using only supplied evidence and visible frames.
+Media ID: {{.MediaID}}. Slide: {{.Slide}}. Requested interval: {{json .Window}}.
+Caption: {{.Caption}}
+Profile instructions: {{.Instructions}}
+Speech evidence: {{json .Transcript}}
+OCR evidence: {{json .OCR}}
+Each image is ordered and timestamp-labeled. Preserve exact OCR quantities.
+Never invent speech, quantities or actions. Flag visual estimates. Return the
+requested JSON schema with the exact requested window boundaries. For a still
+image/slide, time zero is a request coordinate, not elapsed video time.

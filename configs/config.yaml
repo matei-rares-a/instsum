@@ -1,0 +1,85 @@
+# Precedence: defaults < this file < IGX_<SECTION>_<KEY> < CLI.
+# Paths are relative to the working directory. No model is downloaded implicitly.
+output:
+  dir: ./out
+  max_reference_frames: 8
+  language: auto
+  image_format: jpg
+fetch:
+  cookies_file: ""
+  cookies_from_browser: ""
+  retries: 3
+  rate_limit_per_min: 10
+  timeout_s: 180
+gpu:
+  device: 0
+  vram_budget_mb: 9000
+  schedule: sequential
+  monitor: false # Enable for target-hardware runs; polling is not a hard VRAM cap.
+asr:
+  engine: whisper-cli
+  executable: whisper-cli
+  server_url: http://127.0.0.1:8081
+  model_path: ./models/ggml-large-v3-turbo.bin
+  vad_model_path: ""
+  language: auto
+  vad: false # Enable with a supported whisper.cpp version and VAD model.
+  no_speech_threshold: 0.6
+  timeout_s: 300
+ocr:
+  engine: tesseract # Explicit alternative; paddle-onnx needs the optional native build.
+  executable: tesseract
+  device: cpu
+  langs: [ro, en]
+  min_confidence: 0.6
+  timeout_s: 120
+  runtime_path: ""
+  detection_model: ""
+  recognition_model: ""
+  dictionary: ""
+frames:
+  analysis_interval_s: 1
+  vlm_frame_size: 768
+  scene_threshold: 0.25
+  dedup_hamming: 4
+  timeout_s: 180
+models:
+  qwen2.5vl-7b:
+    ollama_tag: qwen2.5vl:7b
+    gguf_path: ./models/Qwen2.5-VL-7B-Instruct-Q4_K_M.gguf
+    mmproj_path: ./models/mmproj-Qwen2.5-VL-7B-Instruct-f16.gguf
+vlm:
+  engine: llamacpp
+  fallback_engine: ""
+  model: qwen2.5vl-7b
+  context_size: 8192
+  window_s: 10
+  window_overlap_s: 1
+  frames_per_window: 8
+  temperature: 0.1
+  json_retries: 1
+  num_predict: 2048
+  concurrency: 1 # GPU execution is deliberately sequential in the prototype.
+llamacpp:
+  server_url: http://127.0.0.1:8080/v1
+  manage_server: false
+  executable: llama-server
+  startup_timeout_s: 120
+ollama:
+  mode: disabled
+  base_url: http://127.0.0.1:11434
+  keep_alive: 5m
+  unload_after_use: false # Enable only when this app controls the selected model's residency.
+  auto_pull: false
+  request_timeout_s: 120
+  stub_fixtures_dir: ./testdata/ollama_fixtures
+structure:
+  profile: auto
+  text_model: same_as_vlm
+profiles_dir: ./profiles
+prompts_dir: ./prompts
+allow_cloud: false
+local_hosts: [] # Explicit trusted local service names, e.g. [llama-server, ollama].
+logging:
+  level: info
+  format: text

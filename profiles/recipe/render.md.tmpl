@@ -1,0 +1,13 @@
+## Recipe: {{index . "title"}}
+
+Servings: {{index . "servings"}}  
+Total time: {{index . "total_time"}}
+
+### Ingredients
+{{range index . "ingredients"}}- {{index . "quantity"}} {{index . "unit"}} {{index . "name"}} ({{index . "source"}}{{if index . "estimated"}}, estimated{{end}})
+{{end}}
+### Steps
+{{range index . "steps"}}- {{index . "n"}}. {{index . "text"}} ({{index . "source"}})
+{{if index . "reference_frame"}}  ![Step](<{{index . "reference_frame"}}>)
+{{end}}
+{{end}}

@@ -1,0 +1,16 @@
+name: recipe
+description: Recipe notes grounded in visible or supplied evidence.
+hints: [recipe, recipes, rețetă, reteta, rețete, cooking, ingrediente, ingredients]
+visual_instructions: Focus on ingredients, exact quantities, utensils, temperatures, times and ordered cooking actions.
+step_field: steps
+unit_aliases:
+  grams: g
+  grame: g
+  gram: g
+  milliliters: ml
+  mililitri: ml
+  teaspoon: linguriță
+  tsp: linguriță
+  tablespoon: lingură
+  tbsp: lingură
+  cup: cană

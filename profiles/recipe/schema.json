@@ -1,0 +1,45 @@
+{
+  "type": "object",
+  "required": ["title", "servings", "total_time", "ingredients", "equipment", "steps", "tips"],
+  "properties": {
+    "title": {"type": "string"},
+    "servings": {"type": "string"},
+    "total_time": {"type": "string"},
+    "ingredients": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "quantity", "unit", "source", "estimated", "evidence_ids", "timestamp"],
+        "properties": {
+          "name": {"type": "string"},
+          "quantity": {"type": "string"},
+          "unit": {"type": "string"},
+          "source": {"enum": ["speech", "ocr", "visual", "caption"]},
+          "estimated": {"type": "boolean"},
+          "timestamp": {"type": ["number", "null"], "minimum": 0},
+          "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+        }
+      }
+    },
+    "equipment": {"type": "array", "items": {"type": "string"}},
+    "steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["n", "text", "t_start", "t_end", "source", "reference_frame", "estimated", "evidence_ids"],
+        "properties": {
+          "n": {"type": "integer", "minimum": 1},
+          "text": {"type": "string"},
+          "t_start": {"type": ["number", "null"], "minimum": 0},
+          "t_end": {"type": ["number", "null"], "minimum": 0},
+          "source": {"enum": ["speech", "ocr", "visual", "caption"]},
+          "media_id": {"type": "string"},
+          "reference_frame": {"type": "string"},
+          "estimated": {"type": "boolean"},
+          "evidence_ids": {"type": "array", "minItems": 1, "items": {"type": "string"}}
+        }
+      }
+    },
+    "tips": {"type": "array", "items": {"type": "string"}}
+  }
+}

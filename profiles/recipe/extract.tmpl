@@ -1,0 +1,10 @@
+Extract a recipe from this evidence. Do not invent missing facts. Preserve exact
+quantities and use empty strings when unknown. Mark estimates. Normalize known
+units to g, ml, linguriță, lingură or cană. Keep steps ordered with source and
+timestamps. Leave reference_frame empty unless explicitly supplied.
+Every ingredient and step must cite existing evidence_ids from the timeline and
+use a matching source. For images, slides and caption-only facts use null time,
+never a fictional video timestamp. Video timestamps must match cited evidence.
+Do not silently resolve contradictory quantities: retain the original evidence.
+Use media_id for steps. Leave reference_frame empty; the exporter selects it.
+Timeline JSON: {{json .Timeline}}

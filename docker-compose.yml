@@ -1,0 +1,43 @@
+services:
+  instsum:
+    build:
+      context: .
+      target: cpu
+    volumes:
+      - ./out:/app/out
+      - ./configs:/app/configs:ro
+      - ./profiles:/app/profiles:ro
+      - ./models:/app/models:ro
+      - ./samples:/app/samples:ro
+    environment:
+      IGX_LOCAL_HOSTS: llama-server,ollama
+      IGX_LLAMACPP_SERVER_URL: http://llama-server:8080/v1
+      IGX_OLLAMA_BASE_URL: http://ollama:11434
+    profiles: [cli]
+  llama-server:
+    build:
+      context: .
+      target: cuda
+    entrypoint: [llama-server]
+    command: ["--host", "0.0.0.0", "--port", "8080", "-m", "/models/model.gguf", "--mmproj", "/models/mmproj.gguf", "-c", "8192", "-ngl", "99"]
+    profiles: [inference]
+    volumes:
+      - ./models:/models:ro
+    ports:
+      - "127.0.0.1:8080:8080"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+  ollama:
+    image: ollama/ollama:latest
+    profiles: [ollama]
+    ports:
+      - "127.0.0.1:11434:11434"
+    volumes:
+      - ollama-models:/root/.ollama
+volumes:
+  ollama-models:

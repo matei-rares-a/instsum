@@ -1,0 +1,10 @@
+{
+  "provenance": "Hand-written synthetic scorer fixtures, NOT evaluated Instagram posts. Real-post quality acceptance remains pending.",
+  "cases": [
+    {"id":"flour","expected":{"ingredients":[{"name":"flour","quantity":"500","unit":"g"}],"steps":[{"text":"mix"},{"text":"bake"}]}},
+    {"id":"milk","expected":{"ingredients":[{"name":"milk","quantity":"200","unit":"ml"}],"steps":[{"text":"heat"},{"text":"stir"}]}},
+    {"id":"salt","expected":{"ingredients":[{"name":"salt","quantity":"1","unit":"tsp"}],"steps":[{"text":"season"}]}},
+    {"id":"eggs","expected":{"ingredients":[{"name":"eggs","quantity":"2","unit":""}],"steps":[{"text":"beat"},{"text":"cook"}]}},
+    {"id":"unknown-quantity","expected":{"ingredients":[{"name":"pepper","quantity":"","unit":""}],"steps":[{"text":"season"},{"text":"serve"}]}}
+  ]
+}
