@@ -1,0 +1,17 @@
+>> Get-Content -LiteralPath (Join-Path $diag 'direct-stderr.txt')
+Diagnostic OCR salvat in: D:\aaaa\git\instsum\logs\diagnostic-ocr-01510134e2e646b38aeb21a3df7bde45
+
+Name              Length
+----              ------
+direct-stderr.txt     30
+direct-stdout.txt    237
+status.txt           103
+tsv-stderr.txt        98
+tsv-stdout.txt         0
+TSV exit code: 0
+Direct exit code: 0
+TESSDATA_PREFIX: D:\aaaa\git\instsum\runtime\setup-v1\tessdata
+read_params_file: Can't open tsv
+read_params_file: Can't open tsv
+Estimating resolution as 442
+Estimating resolution as 442

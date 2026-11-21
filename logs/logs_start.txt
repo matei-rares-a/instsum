@@ -1,0 +1,18 @@
+PS D:\aaaa\git\instsum> .\start.bat
+Pornire: 2026-11-21 21:24:17 +02:00
+Jurnal: D:\aaaa\git\instsum\logs\instsum-20261121-212417-d580964ca35940e7abe0b8928a492f6a.log
+URL incarcat din start-url.txt.
+Se pregateste configuratia locala din configs\config.yaml...
+Se proceseaza postarea...
+time=2026-11-21T21:24:21.787+02:00 level=WARN msg="partial pipeline stage" stage=asr media=media-1 reason="ffmpeg output is not 16 kHz mono PCM WAV: expected a standard 16 kHz, mono, signed 16-bit PCM WAV file"
+time=2026-11-21T21:24:29.484+02:00 level=WARN msg="partial pipeline stage" stage=ocr media=media-1 reason="parse tesseract TSV for \"out\\\\run-2082977941\\\\media-1\\\\frame_000001.jpg\": empty TSV output"
+time=2026-11-21T21:24:44.196+02:00 level=WARN msg="partial pipeline stage" stage=vlm media=media-1 reason="model window does not match requested interval 9.000-19.000"
+time=2026-11-21T21:24:48.324+02:00 level=WARN msg="partial pipeline stage" stage=vlm media=media-1 reason="model window does not match requested interval 18.000-28.000"
+time=2026-11-21T21:24:52.462+02:00 level=WARN msg="partial pipeline stage" stage=vlm media=media-1 reason="model window does not match requested interval 27.000-37.000"
+time=2026-11-21T21:24:57.063+02:00 level=WARN msg="partial pipeline stage" stage=vlm media=media-1 reason="model window does not match requested interval 36.000-46.000"
+time=2026-11-21T21:25:05.985+02:00 level=WARN msg="partial pipeline stage" stage=vlm media=media-1 reason="model window does not match requested interval 45.000-50.316"
+time=2026-11-21T21:25:32.497+02:00 level=WARN msg="partial pipeline stage" stage=structure media="" reason="t_start 0.000 is unsupported by evidence timestamps"
+./out\run-2082977941
+time=2026-11-21T21:25:33.712+02:00 level=WARN msg="incomplete result" output=./out\run-2082977941
+Rezultatul este partial. Verifica avertismentele din jurnal si rezultatul exportat.
+Incheiere: 2026-11-21 21:25:33 +02:00; cod: 2

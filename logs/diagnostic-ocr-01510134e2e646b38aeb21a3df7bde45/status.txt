@@ -1,0 +1,3 @@
+TSV exit code: 0
+Direct exit code: 0
+TESSDATA_PREFIX: D:\aaaa\git\instsum\runtime\setup-v1\tessdata
