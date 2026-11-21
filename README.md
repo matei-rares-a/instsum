@@ -106,7 +106,8 @@ recording diagnostics.
 
 Logs can contain private paths, URLs or other sensitive information emitted by
 external tools. Review and remove sensitive information before sharing a log;
-never share cookies, passwords or tokens. Logs are excluded from Git.
+never share cookies, passwords or tokens. Logs are not excluded from Git, so
+review them before staging or committing.
 
 Install Go 1.23+, then `go test ./...` and `go build -o instsum ./cmd/instsum`.
 Run from the repository root. For a completely offline demonstration using a

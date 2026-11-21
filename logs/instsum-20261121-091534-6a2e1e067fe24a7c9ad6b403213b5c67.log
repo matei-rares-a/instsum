@@ -1,0 +1,7 @@
+Pornire: 2026-11-21 09:15:34 +02:00
+Jurnal: D:\aaaa\git\instsum\logs\instsum-20261121-091534-6a2e1e067fe24a7c9ad6b403213b5c67.log
+Se construieste aplicatia cu Go...
+go: downloading go1.23 (windows/amd64)
+go: download go1.23 for windows/amd64: toolchain not available
+Eroare la compilare. Cod: 1
+Incheiere: 2026-11-21 09:18:01 +02:00; cod: 1

@@ -1,0 +1,12 @@
+Pornire: 2026-11-21 09:27:05 +02:00
+Jurnal: D:\aaaa\git\instsum\logs\instsum-20261121-092705-21ac3bba01ce4ad68ba3427cc0547f45.log
+Se construieste aplicatia cu Go...
+go: downloading gopkg.in/yaml.v3 v3.0.1
+go: downloading golang.org/x/sync v0.10.0
+go: downloading github.com/corona10/goimagehash v1.1.0
+go: downloading github.com/santhosh-tekuri/jsonschema/v5 v5.3.1
+go: downloading github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+Se proceseaza postarea...
+time=2026-11-21T09:31:40.451+02:00 level=ERROR msg="pipeline failed" error="fetch: video fetch: yt-dlp unavailable: install it and configure its executable/PATH: exec: \"yt-dlp\": executable file not found in %PATH%; gallery fetch: gallery-dl unavailable: install it and configure its executable/PATH: exec: \"gallery-dl\": executable file not found in %PATH%"
+Procesarea a esuat. Cod: 1
+Incheiere: 2026-11-21 09:31:40 +02:00; cod: 1
