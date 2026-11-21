@@ -1,0 +1,28 @@
+TEST NVIDIA-SMI SI SETUP
+
+1. Pe calculatorul unde rulezi aplicatia, deschide PowerShell.
+   Copiaza si executa aceste doua linii:
+
+cd 'D:\aaaa\git\instsum'
+$p = 'C:\Windows\System32\DriverStore\FileRepository\nv_dispi.inf_amd64_feedb8c0271ca811'
+
+2. Copiaza si executa linia urmatoare:
+
+& "$p\nvidia-smi.exe"
+
+3. Daca apare un tabel NVIDIA cu placa video, copiaza si executa:
+
+$env:PATH = "$p;$env:PATH"
+.\setup.bat
+
+   Modificarea PATH este temporara, doar pentru aceasta fereastra.
+   Setup va cere confirmare inainte de descarcari. Nu inchide fereastra.
+
+4. Daca la pasul 2 apare o eroare, nu executa pasul 3.
+   Copiaza eroarea sau trimite o captura. Nu stim inca daca acel director
+   contine versiunea activa a driverului.
+
+5. Daca setup se opreste cu alta eroare, trimite cel mai nou fisier
+   logs\setup-*.log. Verifica jurnalul inainte de a-l trimite: poate
+   contine cai personale sau alte date sensibile. Nu trimite parole,
+   cookie-uri sau token-uri.
