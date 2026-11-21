@@ -75,6 +75,25 @@ func (o testOCR) Recognize(ctx context.Context, frames []core.Frame) ([]core.Seg
 
 type testEngine struct{}
 
+type retryWindowEngine struct {
+	calls         int
+	alwaysInvalid bool
+}
+
+func (e *retryWindowEngine) Ready(context.Context) error { return nil }
+func (e *retryWindowEngine) Complete(ctx context.Context, r core.Request) (json.RawMessage, error) {
+	if r.Kind == "window" {
+		e.calls++
+		if e.alwaysInvalid || e.calls == 1 {
+			return json.Marshal(core.Window{Window: []float64{r.Window[0] + 1, r.Window[1]}, Events: []core.Event{{Time: r.Window[0], Action: "Mix", Objects: []string{}, Quantities: []string{}}}})
+		}
+		if !strings.Contains(r.Prompt, "model window does not match") {
+			return nil, fmt.Errorf("missing repair information")
+		}
+	}
+	return (testEngine{}).Complete(ctx, r)
+}
+
 func (testEngine) Ready(context.Context) error { return nil }
 func (testEngine) Complete(ctx context.Context, r core.Request) (json.RawMessage, error) {
 	if r.Kind == "window" {
@@ -113,11 +132,39 @@ func journeyConfig(t *testing.T) config.Config {
 	if e != nil {
 		t.Fatal(e)
 	}
+
 	c.Output.Dir = filepath.Join(t.TempDir(), "out")
 	c.ProfilesDir = filepath.Join("..", "..", "profiles")
 	c.PromptsDir = filepath.Join("..", "..", "prompts")
 	c.Structure.Profile = "recipe"
 	return c
+}
+
+func TestWindowSemanticRepairAndFailure(t *testing.T) {
+	for _, fail := range []bool{false, true} {
+		t.Run(fmt.Sprintf("fail=%t", fail), func(t *testing.T) {
+			c := journeyConfig(t)
+			c.VLM.Retries = 1
+			engine := &retryWindowEngine{alwaysInvalid: fail}
+			items := []core.Media{{ID: "media-1", Path: "test.mp4", Kind: "video", Duration: 3}}
+			d := Dependencies{Fetcher: testFetch{items}, Media: testMedia{}, ASR: testASR{}, OCR: testOCR{}, Engine: func(config.Config, string) Engine { return engine }}
+			dir, err := RunWith(context.Background(), c, "input", d)
+			if fail && !IsPartial(err) || !fail && err != nil {
+				t.Fatalf("unexpected result: %v", err)
+			}
+			data, err := os.ReadFile(filepath.Join(dir, "result.json"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			var result Result
+			if err := json.Unmarshal(data, &result); err != nil {
+				t.Fatal(err)
+			}
+			if engine.calls != 2 || fail && (len(result.FailedWindows) != 1 || len(result.Visual) != 0) || !fail && len(result.Visual) != 1 {
+				t.Fatalf("calls=%d, visual=%d, failures=%d", engine.calls, len(result.Visual), len(result.FailedWindows))
+			}
+		})
+	}
 }
 func TestRecipeJourneysAndPartialStages(t *testing.T) {
 	for _, scenario := range []struct {

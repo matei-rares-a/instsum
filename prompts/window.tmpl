@@ -8,3 +8,5 @@ Each image is ordered and timestamp-labeled. Preserve exact OCR quantities.
 Never invent speech, quantities or actions. Flag visual estimates. Return the
 requested JSON schema with the exact requested window boundaries. For a still
 image/slide, time zero is a request coordinate, not elapsed video time.
+Do not treat caption or speech as visible text; on_screen_text must come only
+from the image or OCR evidence. Use an empty string if no text is visible.

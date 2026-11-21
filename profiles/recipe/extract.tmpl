@@ -7,4 +7,9 @@ use a matching source. For images, slides and caption-only facts use null time,
 never a fictional video timestamp. Video timestamps must match cited evidence.
 Do not silently resolve contradictory quantities: retain the original evidence.
 Use media_id for steps. Leave reference_frame empty; the exporter selects it.
+Do not infer a quantity or unit for any ingredient. Use an empty string when
+its cited evidence does not explicitly state that exact quantity or unit.
+The words linguriță (teaspoon) and lingură (tablespoon) are different units.
+For caption-only evidence timestamp, t_start and t_end must be null, not zero;
+do not attach a media_id to a caption-only step.
 Timeline JSON: {{json .Timeline}}

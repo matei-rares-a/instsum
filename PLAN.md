@@ -301,3 +301,73 @@ require an explicit `IGX_GPU_DEVICE`. Managed llama.cpp resolves the configured
 index to a UUID, validates physical capacity and restricts its subprocess to
 that UUID with GPU splitting disabled. Runtime monitoring uses the same
 physical index. These checks do not prove actual target-machine placement.
+
+## Approved correction after the real Windows reel run
+
+Status: implemented and verified offline with Go tests, vet, CLI build, setup
+helper tests and PowerShell syntax checks. The target-machine live retest remains
+outstanding; the actual ASR intermediate and model output are not verified.
+This section supplements the existing
+architecture, resource policy, risk assessment, verification and dedicated
+Ollama vs llama.cpp assessment above.
+
+### Observations and scope
+
+- The saved input WAV is mono 16-bit PCM at 16 kHz, but contains a legitimate
+  `LIST` chunk before `data`. The ASR adapter checks fixed header offsets;
+  its second ffmpeg-produced temporary WAV still needs an end-to-end regression
+  test because that file was deleted during the original run.
+- Tesseract reports `Can't open tsv`, exits zero and returns empty stdout when
+  the config file is missing. The direct `tessedit_create_tsv=1` diagnostic
+  returns a TSV header and rows, but did not establish recognition accuracy.
+- The CUDA server selected the RTX 3080 and loaded the model, yet five of six
+  VLM responses used window boundaries different from the requested interval.
+  Structure output used unsupported timestamps and invented recipe quantities
+  and units. VRAM peak was not monitored.
+- A PATH adjustment was necessary for NVIDIA-SMI even though it existed; the
+  current setup-installed executable is built once, so updated source alone
+  will not update the executable used by `start.bat`.
+
+### Milestones and acceptance
+
+1. **Recognition:** validate RIFF/WAVE chunks and PCM parameters without assuming
+   the `data` chunk follows `fmt ` immediately; reject truncated, unsupported or
+   malformed audio explicitly. Use Tesseract's directly configured TSV output
+   rather than relying on a missing `tsv` config file; retain meaningful stderr
+   when output is invalid and distinguish no observed text from a failed OCR
+   invocation. Test representative FFmpeg WAV headers, malformed inputs, both
+   Tesseract exit-zero/empty-output failure and successful TSV/blank-frame cases.
+2. **Evidence and inference:** investigate the response path and implement
+   bounded repair for invalid window output using the configured retry count.
+   The requested interval is orchestration metadata; only retain events whose
+   timestamps and evidence remain valid, never silently clamp timestamps or
+   promote unvalidated facts. Preserve raw diagnostics on final failure. Improve
+   prompts and semantic checks for unknown/null caption timestamps and
+   unsupported quantities/units, without weakening provenance validation or
+   inventing time, values or visual evidence. Test the observed incorrect window
+   boundaries, out-of-range events, caption-only/null timestamps and the
+   fabricated ingredient-unit cases, including exhaustion and partial results.
+3. **Windows handoff:** make NVIDIA-SMI discovery reliable without changing
+   global PATH or guessing among incompatible driver binaries; keep physical
+   GPU UUID mapping and explicit failure when ambiguous or missing. Ensure the
+   installed executable is rebuilt or explicitly refreshed from updated source
+   without re-downloading models or overwriting user configuration; test
+   cleanly with isolated fixtures and document the exact target-machine steps.
+4. **Verification and delivery:** run focused ASR, OCR, structure, pipeline and
+   Windows launcher tests, then `go test ./...`, `go vet ./...` and a build.
+   Use local fixtures and mocked servers without network; preserve existing
+   user files and do not include reel media or logs in a fix commit. Update
+   README and DECISIONS as directly needed. After verified code fixes, commit
+   and push per the user's log-fix workflow. Provide the user a target-machine
+   retest with refreshed binary, reviewed logs, result JSON/Markdown and sampled
+   VRAM; live inference and Romanian accuracy are not established by mocks.
+
+The pipeline remains local-first and sequential: whisper.cpp ASR, CPU Tesseract
+OCR and managed llama.cpp VLM/text on the configured RTX 3080; no real Ollama
+server is required. The 9000 MB budget and safety margin remain unchanged.
+Measure stage times and observed peak VRAM on target hardware; compare recipe
+ingredients, exact quantities, unit correctness, sources and ordered steps
+against the original evidence and the existing evaluation/benchmark plan.
+Do not treat one successful reel or sampled monitoring as proof of all
+acceptance criteria or a hard VRAM cap. System RAM availability and model
+compatibility are measured on the target machine, not assumed.

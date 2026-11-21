@@ -39,6 +39,13 @@ try {
     Set-Location -LiteralPath $root
     Write-LogLine ("Pornire: {0}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss zzz'))
     Write-LogLine "Jurnal: $logPath"
+    . (Join-Path $PSScriptRoot 'nvidia-smi.ps1')
+    $nvidia = Enable-NvidiaSmi
+    if ($nvidia) {
+        Write-LogLine "NVIDIA-SMI: $nvidia"
+    } else {
+        Write-LogLine 'NVIDIA-SMI nu este in PATH sau in locatiile standard; seteaza IGX_NVIDIA_SMI_PATH la calea absoluta a executabilului, daca este necesar.'
+    }
     $urlFile = Join-Path $root 'start-url.txt'
     $inputUrl = $null
     if (Test-Path -LiteralPath $urlFile -PathType Leaf) {

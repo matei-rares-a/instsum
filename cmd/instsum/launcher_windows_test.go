@@ -18,7 +18,7 @@ func launcherDir(t *testing.T, executable bool) string {
 	if err := os.Mkdir(filepath.Join(root, "scripts"), 0700); err != nil {
 		t.Fatal(err)
 	}
-	for _, file := range []string{"start.bat", filepath.Join("scripts", "start.ps1")} {
+	for _, file := range []string{"start.bat", filepath.Join("scripts", "start.ps1"), filepath.Join("scripts", "nvidia-smi.ps1")} {
 		b, err := os.ReadFile(filepath.Join("..", "..", file))
 		if err != nil {
 			t.Fatal(err)

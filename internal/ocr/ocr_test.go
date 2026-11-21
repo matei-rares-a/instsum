@@ -48,6 +48,10 @@ func TestParseTesseractTSVGroupsWordsAndFiltersConfidence(t *testing.T) {
 	if _, err = parseTSV([]byte(tsv+"malformed row\n"), 0); err == nil {
 		t.Fatal("expected malformed TSV row error")
 	}
+	blank, err := parseTSV([]byte(strings.Split(tsv, "\n")[0]+"\n"), 0)
+	if err != nil || len(blank) != 0 {
+		t.Fatalf("valid blank frame: %#v, %v", blank, err)
+	}
 }
 
 func TestCTCDecoderCollapsesRepeatsAndBlank(t *testing.T) {
@@ -133,6 +137,12 @@ func TestTesseractInvocationProducesTimestampedSegments(t *testing.T) {
 	if err == nil || !strings.Contains(err.Error(), "model failed") || len(err.Error()) > 4600 {
 		t.Fatalf("expected explicit bounded stderr error, got %v", err)
 	}
+	t.Setenv("INSTSUM_TEST_OCR_FAIL", "")
+	t.Setenv("INSTSUM_TEST_OCR_EMPTY", "1")
+	_, err = New(c).Recognize(context.Background(), []core.Frame{{Path: "frame.png"}})
+	if err == nil || !strings.Contains(err.Error(), "empty TSV output") || !strings.Contains(err.Error(), "Can't open tsv") {
+		t.Fatalf("expected empty TSV with diagnostic stderr, got %v", err)
+	}
 }
 
 func helperName(name string) string {
@@ -146,10 +156,14 @@ const fakeTesseractSource = `package main
 import ("os"; "strings")
 func main() {
 	args := strings.Join(os.Args[1:], " ")
-	if !strings.Contains(args, "-l ron+eng") || !strings.HasSuffix(args, " tsv") { os.Exit(2) }
+	if !strings.Contains(args, "-l ron+eng") || !strings.HasSuffix(args, " -c tessedit_create_tsv=1") { os.Exit(2) }
 	if os.Getenv("INSTSUM_TEST_OCR_FAIL") == "1" {
 		_, _ = os.Stderr.WriteString("model failed: " + strings.Repeat("x", 10000))
 		os.Exit(1)
+	}
+	if os.Getenv("INSTSUM_TEST_OCR_EMPTY") == "1" {
+		_, _ = os.Stderr.WriteString("Can't open tsv")
+		return
 	}
 	_, _ = os.Stderr.WriteString("Estimating resolution as 741\n")
 	_, _ = os.Stdout.Write([]byte("level\tpage_num\tblock_num\tpar_num\tline_num\tword_num\tleft\ttop\twidth\theight\tconf\ttext\n" +

@@ -340,17 +340,25 @@ func RunWith(ctx context.Context, c config.Config, input string, d Dependencies)
 					return e
 				}
 				var b json.RawMessage
-				e = guard(func(stageCtx context.Context) error {
-					var e error
-					b, e = engine.Complete(stageCtx, core.Request{Prompt: prompt, Images: j.frames, Schema: windowSchema, Kind: "window", Profile: p.Name, Window: j.w, MediaID: j.media.ID, Slide: j.media.Slide})
-					return e
-				})
 				var w core.Window
-				if e == nil {
+				for attempt := 0; attempt <= c.VLM.Retries; attempt++ {
+					e = guard(func(stageCtx context.Context) error {
+						var e error
+						b, e = engine.Complete(stageCtx, core.Request{Prompt: prompt, Images: j.frames, Schema: windowSchema, Kind: "window", Profile: p.Name, Window: j.w, MediaID: j.media.ID, Slide: j.media.Slide})
+						return e
+					})
+					if e != nil {
+						break
+					}
+					w = core.Window{}
 					e = json.Unmarshal(b, &w)
-				}
-				if e == nil {
-					e = structure.ValidateWindow(w, j.w[0], j.w[1])
+					if e == nil {
+						e = structure.ValidateWindow(w, j.w[0], j.w[1])
+					}
+					if e == nil {
+						break
+					}
+					prompt += "\nCorrect the JSON without inventing evidence: " + e.Error()
 				}
 				if e != nil {
 					r.FailedWindows = append(r.FailedWindows, output.WindowFailure{MediaID: j.media.ID, Window: j.w, Output: string(b), Error: e.Error()})
@@ -429,7 +437,7 @@ func RunWith(ctx context.Context, c config.Config, input string, d Dependencies)
 				return e
 			})
 			if e == nil {
-				e = structure.ValidateNotes(r.Notes, r.Timeline)
+				e = structure.ValidateNotes(r.Notes, r.Timeline, p.UnitAliases)
 			}
 			if e == nil {
 				break

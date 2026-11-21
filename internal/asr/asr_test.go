@@ -2,6 +2,7 @@ package asr
 
 import (
 	"context"
+	"encoding/binary"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -14,6 +15,36 @@ import (
 	"instsum/internal/config"
 	"instsum/internal/core"
 )
+
+func TestValidateWAVChunkLayout(t *testing.T) {
+	base := fakeWAV()
+	withMetadata := append(append([]byte{}, base[:36]...), []byte{'L', 'I', 'S', 'T', 3, 0, 0, 0, 'a', 'b', 'c', 0}...)
+	withMetadata = append(withMetadata, base[36:]...)
+	binary.LittleEndian.PutUint32(withMetadata[4:8], uint32(len(withMetadata)-8))
+	truncated := append([]byte{}, withMetadata[:len(withMetadata)-1]...)
+	wrongFormat := append([]byte{}, withMetadata...)
+	wrongFormat[22] = 2
+	for _, tt := range []struct {
+		name  string
+		data  []byte
+		valid bool
+	}{
+		{"canonical", base, true},
+		{"metadata and odd padding", withMetadata, true},
+		{"truncated chunk", truncated, false},
+		{"stereo", wrongFormat, false},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "test.wav")
+			if err := os.WriteFile(path, tt.data, 0600); err != nil {
+				t.Fatal(err)
+			}
+			if err := validateWAV(path); (err == nil) != tt.valid {
+				t.Fatalf("validateWAV: %v, valid=%v", err, tt.valid)
+			}
+		})
+	}
+}
 
 func TestParseWhisperOutputs(t *testing.T) {
 	tests := []struct {
@@ -250,10 +281,12 @@ func main() {
 	}
 }
 func wav() []byte {
-	data := make([]byte, 44)
-	copy(data[0:4], "RIFF"); copy(data[8:12], "WAVE"); copy(data[12:16], "fmt ")
+	data := make([]byte, 56)
+	copy(data[0:4], "RIFF"); data[4] = 48; copy(data[8:12], "WAVE"); copy(data[12:16], "fmt ")
 	data[16] = 16; data[20] = 1; data[22] = 1; data[24] = 0x80; data[25] = 0x3e
-	data[28] = 0x00; data[29] = 0x7d; data[32] = 2; data[34] = 16; copy(data[36:40], "data")
+	data[28] = 0x00; data[29] = 0x7d; data[32] = 2; data[34] = 16
+	copy(data[36:40], "LIST"); data[40] = 3; copy(data[44:47], "abc")
+	copy(data[48:52], "data")
 	return data
 }`
 
@@ -271,6 +304,7 @@ func assertTempClean(t *testing.T, path string) {
 func fakeWAV() []byte {
 	data := make([]byte, 44)
 	copy(data[0:4], "RIFF")
+	data[4] = 36
 	copy(data[8:12], "WAVE")
 	copy(data[12:16], "fmt ")
 	data[16] = 16

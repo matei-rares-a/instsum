@@ -82,6 +82,16 @@ model accuracy, ONNX/CUDA ABI compatibility or peak VRAM.
   index to a UUID, limits the owned CUDA process to that GPU, and rejects
   conflicting CUDA visibility restrictions; monitoring retains the physical
   NVIDIA-SMI index. This mapping does not configure externally managed engines.
+* Windows launch/setup resolve NVIDIA-SMI via explicit `IGX_NVIDIA_SMI_PATH`,
+  existing PATH or standard NVIDIA locations; they do not guess between
+  DriverStore packages or modify global PATH. The installed Go executable needs
+  an explicit rebuild after updating source; see the Windows handoff instructions.
+* FFmpeg WAV validation accepts bounded RIFF metadata chunks and verifies PCM
+  parameters. CPU Tesseract requests TSV directly without a separate config file.
+  Semantic retries retain rejected window output if repair fails. Caption
+  ingredient quantities and units require textual support on a matching line;
+  this conservative check can reject valid paraphrases and is not proof of
+  model accuracy or of association when multiple facts share a line.
 
 ## Validation boundaries
 

@@ -96,8 +96,57 @@ func fold(s string) string {
 	}, s)
 }
 
+func evidenceContains(text, term string) bool {
+	normalize := func(s string) string {
+		return strings.Map(func(r rune) rune {
+			switch unicode.ToLower(r) {
+			case 'ă', 'â':
+				return 'a'
+			case 'î':
+				return 'i'
+			case 'ș', 'ş':
+				return 's'
+			case 'ț', 'ţ':
+				return 't'
+			default:
+				return unicode.ToLower(r)
+			}
+		}, s)
+	}
+	haystack, needle := []rune(normalize(text)), []rune(normalize(strings.TrimSpace(term)))
+	if len(needle) == 0 {
+		return false
+	}
+	numeric := true
+	for _, r := range needle {
+		if !unicode.IsDigit(r) && r != '.' && r != ',' && r != '/' {
+			numeric = false
+			break
+		}
+	}
+	word := func(r rune) bool {
+		return unicode.IsLetter(r) || unicode.IsDigit(r)
+	}
+	separator := func(r rune) bool {
+		return r == '.' || r == ',' || r == '/'
+	}
+	for i := 0; i+len(needle) <= len(haystack); i++ {
+		end := i + len(needle)
+		if numeric && ((i >= 2 && separator(haystack[i-1]) && unicode.IsDigit(haystack[i-2])) ||
+			(end+1 < len(haystack) && separator(haystack[end]) && unicode.IsDigit(haystack[end+1]))) {
+			continue
+		}
+		if string(haystack[i:i+len(needle)]) == string(needle) &&
+			(i == 0 || !word(haystack[i-1])) &&
+			(end == len(haystack) || !word(haystack[end])) {
+			return true
+		}
+	}
+	return false
+}
+
 // ValidateNotes checks provenance against supplied evidence, not model assertions.
-func ValidateNotes(notes json.RawMessage, evidence []core.Segment) error {
+func ValidateNotes(notes json.RawMessage, evidence []core.Segment, aliases map[string]string) error {
 	var value any
 	if e := json.Unmarshal(notes, &value); e != nil {
 		return e
@@ -136,16 +185,65 @@ func ValidateNotes(notes json.RawMessage, evidence []core.Segment) error {
 					}
 					matched = append(matched, ev)
 				}
+				factEvidence := matched
+				if source == "caption" {
+					name, hasName := x["name"].(string)
+					_, hasQuantity := x["quantity"].(string)
+					if hasName && hasQuantity && strings.TrimSpace(name) != "" {
+						factEvidence = nil
+						for _, ev := range matched {
+							for _, line := range strings.Split(ev.Text, "\n") {
+								if evidenceContains(line, name) {
+									fragment := ev
+									fragment.Text = line
+									factEvidence = append(factEvidence, fragment)
+								}
+							}
+						}
+						if len(factEvidence) == 0 {
+							return fmt.Errorf("ingredient %q is not present in cited caption", name)
+						}
+					}
+				}
 				if quantity, ok := x["quantity"].(string); ok && quantity != "" && source == "ocr" {
 					pattern := regexp.MustCompile(`(^|[^0-9.,/])` + regexp.QuoteMeta(fold(quantity)) + `($|[^0-9.,/])`)
 					found := false
-					for _, ev := range matched {
+					for _, ev := range factEvidence {
 						if pattern.MatchString(fold(ev.Text)) {
 							found = true
 						}
 					}
 					if !found {
 						return fmt.Errorf("OCR quantity %q is not present verbatim in its evidence", quantity)
+					}
+				}
+				if quantity, ok := x["quantity"].(string); ok && quantity != "" && source != "ocr" {
+					estimated, _ := x["estimated"].(bool)
+					if !estimated {
+						found := false
+						for _, ev := range factEvidence {
+							found = found || evidenceContains(ev.Text, quantity)
+						}
+						if !found {
+							return fmt.Errorf("quantity %q is not supported by cited evidence", quantity)
+						}
+					}
+				}
+				if unit, ok := x["unit"].(string); ok && strings.TrimSpace(unit) != "" {
+					terms := []string{unit}
+					for alias, canonical := range aliases {
+						if strings.EqualFold(canonical, unit) {
+							terms = append(terms, alias)
+						}
+					}
+					found := false
+					for _, ev := range factEvidence {
+						for _, term := range terms {
+							found = found || evidenceContains(ev.Text, term)
+						}
+					}
+					if !found {
+						return fmt.Errorf("unit %q is not supported by cited evidence", unit)
 					}
 				}
 				if estimate, ok := x["estimated"].(bool); ok && !estimate {

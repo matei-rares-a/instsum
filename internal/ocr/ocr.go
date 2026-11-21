@@ -67,7 +67,7 @@ func (e *engine) recognizeTesseract(parent context.Context, frames []core.Frame)
 		if err := ctx.Err(); err != nil {
 			return nil, err
 		}
-		cmd := exec.CommandContext(ctx, e.config.OCR.Executable, frame.Path, "stdout", "-l", langs, "tsv")
+		cmd := exec.CommandContext(ctx, e.config.OCR.Executable, frame.Path, "stdout", "-l", langs, "-c", "tessedit_create_tsv=1")
 		stderr := boundedDiagnostic{}
 		cmd.Stderr = &stderr
 		output, err := cmd.Output()
@@ -79,7 +79,7 @@ func (e *engine) recognizeTesseract(parent context.Context, frames []core.Frame)
 		}
 		lines, err := parseTSV(output, e.config.OCR.MinConfidence)
 		if err != nil {
-			return nil, fmt.Errorf("parse tesseract TSV for %q: %w", frame.Path, err)
+			return nil, fmt.Errorf("parse tesseract TSV for %q: %w; stderr: %s", frame.Path, err, strings.TrimSpace(stderr.String()))
 		}
 		for _, line := range lines {
 			segments = append(segments, core.Segment{

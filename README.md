@@ -74,15 +74,26 @@ GPU. An existing `CUDA_VISIBLE_DEVICES` must be unset or equal to that UUID;
 conflicting restrictions cause an explicit error. External inference servers
 and optional Paddle GPU OCR must be configured separately.
 
-`nvidia-smi` must be on PATH for setup, managed llama.cpp and optional GPU
-monitoring. If using a temporary PATH workaround, start `start.bat` in the same
-PowerShell window as setup; a later double-click does not inherit that window.
+Setup and the launcher search PATH and standard NVIDIA locations for
+`nvidia-smi.exe`. If it is elsewhere, set `IGX_NVIDIA_SMI_PATH` to its absolute
+path before starting them. This affects the launched processes only; the
+launcher does not choose between DriverStore packages. For example, from a
+PowerShell window:
+
+```powershell
+$env:IGX_NVIDIA_SMI_PATH = 'C:\path\to\nvidia-smi.exe'
+.\start.bat
+```
+
+Replace the example with the verified driver path. A later double-click does not
+inherit this temporary variable. Invalid explicit paths produce an error.
 The setup checks total VRAM, not currently free VRAM, and does not prove that
 the models or actual workload fit.
 
 To retest the same reel without entering it every time, create `start-url.txt`
 in the repository root and paste the URL on one line. `start.bat` will use it
-automatically; the file is ignored by Git so the private URL is not committed.
+automatically. The file is gitignored only while untracked; if it is already
+tracked, Git may still include its content in commits.
 Delete the file or leave it empty to return to the interactive prompt. A saved
 URL is still validated by the application, and may appear in local diagnostic
 logs, so review logs before sharing them.
@@ -112,6 +123,26 @@ value or `IGX_LLAMACPP_MANAGE_SERVER=false`. Other `IGX_...` overrides remain
 available. Temporary configuration is deleted after the run. Without a completed
 setup, the original launcher behavior remains: use root `instsum.exe`, or build
 temporarily using Go 1.23+ on PATH. `start.bat` never downloads dependencies.
+
+After updating source, the setup-installed executable is not rebuilt
+automatically. From the project root in PowerShell, refresh it without
+downloading models or changing configuration:
+
+```powershell
+$runtime = Join-Path (Get-Location).Path 'runtime\setup-v1'
+$env:GOPATH = Join-Path $runtime 'go-work'
+$env:GOCACHE = Join-Path $runtime 'go-build-cache'
+$env:GOENV = 'off'
+$env:GOWORK = 'off'
+$env:GOTOOLCHAIN = 'local'
+$env:GOPROXY = 'off'
+$tmp = Join-Path $runtime ("instsum-" + [guid]::NewGuid().ToString('N') + '.tmp.exe')
+& (Join-Path $runtime 'toolchain\go\bin\go.exe') build -o $tmp .\cmd\instsum
+if ($LASTEXITCODE -eq 0) { Move-Item -LiteralPath $tmp -Destination (Join-Path $runtime 'instsum.exe') -Force -ErrorAction Stop; Write-Host 'Executabil actualizat.' } else { Write-Error 'Compilarea a esuat; executabilul anterior nu a fost inlocuit.' }
+```
+
+If offline dependencies are missing, the rebuild fails explicitly; investigate
+the error rather than assuming a stale executable was updated.
 
 Each invocation writes a separate `logs/instsum-*.log` containing startup
 diagnostics, application output, warnings and exit code; the window prints its

@@ -1,5 +1,6 @@
 $ErrorActionPreference = 'Stop'
 Import-Module (Join-Path $PSHOME 'Modules\Microsoft.PowerShell.Utility\Microsoft.PowerShell.Utility.psd1')
+. (Join-Path $PSScriptRoot 'nvidia-smi.ps1')
 $setup = Join-Path $PSScriptRoot 'setup.ps1'
 $tokens = $null
 $errors = $null
@@ -17,8 +18,16 @@ function Assert-Fails([scriptblock]$action) {
     if (-not $failed) { throw 'Expected an explicit failure.' }
 }
 $temp = Join-Path ([IO.Path]::GetTempPath()) ("instsum-setup-test-" + [guid]::NewGuid().ToString('N'))
+$oldPath = $env:PATH
+$oldNvidia = $env:IGX_NVIDIA_SMI_PATH
 try {
     New-Item -ItemType Directory -Path $temp | Out-Null
+    $explicitGpu = Join-Path $temp 'nvidia-smi.exe'
+    [IO.File]::WriteAllText($explicitGpu, 'fixture')
+    $env:IGX_NVIDIA_SMI_PATH = $explicitGpu
+    if ((Enable-NvidiaSmi) -ne $explicitGpu -or -not $env:PATH.StartsWith("$temp;")) { throw 'Explicit NVIDIA path was not selected.' }
+    $env:IGX_NVIDIA_SMI_PATH = Join-Path $temp 'missing.exe'
+    Assert-Fails { Enable-NvidiaSmi }
     $file = Join-Path $temp 'existing file'
     [IO.File]::WriteAllText($file, 'verified')
     $hash = (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash
@@ -54,5 +63,7 @@ try {
     if (Test-Path -LiteralPath (Join-Path $temp 'escape.txt')) { throw 'Unsafe ZIP escaped extraction.' }
     Write-Host 'Setup helper tests passed.'
 } finally {
+    $env:PATH = $oldPath
+    $env:IGX_NVIDIA_SMI_PATH = $oldNvidia
     if (Test-Path -LiteralPath $temp) { Remove-Item -LiteralPath $temp -Recurse -Force }
 }

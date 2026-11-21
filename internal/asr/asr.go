@@ -3,6 +3,7 @@ package asr
 import (
 	"bytes"
 	"context"
+	"encoding/binary"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -77,16 +78,63 @@ func validateWAV(path string) error {
 		return err
 	}
 	defer file.Close()
-	header := make([]byte, 44)
+	info, err := file.Stat()
+	if err != nil {
+		return err
+	}
+	header := make([]byte, 12)
 	if _, err := io.ReadFull(file, header); err != nil {
 		return err
 	}
-	if string(header[0:4]) != "RIFF" || string(header[8:12]) != "WAVE" ||
-		string(header[12:16]) != "fmt " || string(header[36:40]) != "data" ||
-		header[22] != 1 || header[23] != 0 ||
-		header[24] != 0x80 || header[25] != 0x3e || header[26] != 0 || header[27] != 0 ||
-		header[34] != 16 || header[35] != 0 {
-		return errors.New("expected a standard 16 kHz, mono, signed 16-bit PCM WAV file")
+	end := int64(binary.LittleEndian.Uint32(header[4:8])) + 8
+	if string(header[0:4]) != "RIFF" || string(header[8:12]) != "WAVE" || end < 12 || end > info.Size() {
+		return errors.New("invalid or truncated RIFF/WAVE file")
+	}
+	var formatOK, dataOK bool
+	for pos := int64(12); pos < end; {
+		var chunk [8]byte
+		if end-pos < 8 {
+			return errors.New("truncated WAV chunk header")
+		}
+		if _, err := io.ReadFull(file, chunk[:]); err != nil {
+			return err
+		}
+		size := int64(binary.LittleEndian.Uint32(chunk[4:]))
+		padded := size + size%2
+		if padded > end-pos-8 {
+			return errors.New("truncated WAV chunk")
+		}
+		switch string(chunk[:4]) {
+		case "fmt ":
+			if size < 16 || formatOK {
+				return errors.New("invalid WAV format chunk")
+			}
+			var format [16]byte
+			if _, err := io.ReadFull(file, format[:]); err != nil {
+				return err
+			}
+			if binary.LittleEndian.Uint16(format[0:2]) != 1 ||
+				binary.LittleEndian.Uint16(format[2:4]) != 1 ||
+				binary.LittleEndian.Uint32(format[4:8]) != 16000 ||
+				binary.LittleEndian.Uint32(format[8:12]) != 32000 ||
+				binary.LittleEndian.Uint16(format[12:14]) != 2 ||
+				binary.LittleEndian.Uint16(format[14:16]) != 16 {
+				return errors.New("expected 16 kHz, mono, signed 16-bit PCM WAV")
+			}
+			formatOK = true
+		case "data":
+			if !formatOK || size%2 != 0 || dataOK {
+				return errors.New("invalid WAV data chunk")
+			}
+			dataOK = true
+		}
+		pos += 8 + padded
+		if _, err := file.Seek(pos, io.SeekStart); err != nil {
+			return err
+		}
+	}
+	if !formatOK || !dataOK {
+		return errors.New("WAV requires format and data chunks")
 	}
 	return nil
 }

@@ -143,6 +143,7 @@ try {
     Set-Location -LiteralPath $root
     Log ("Setup experimental - {0}" -f (Get-Date -Format 'yyyy-MM-dd HH:mm:ss zzz'))
     Log "Jurnal: $logPath"
+    . (Join-Path $PSScriptRoot 'nvidia-smi.ps1')
     Log 'Fisierele pot contine cai personale. Verifica jurnalul inainte de a-l trimite.'
     if (-not [Environment]::Is64BitOperatingSystem -or $env:PROCESSOR_ARCHITECTURE -ne 'AMD64') {
         throw 'Este necesar Windows x64.'
@@ -150,9 +151,10 @@ try {
     $os = Get-CimInstance Win32_OperatingSystem
     $availableGB = [math]::Round($os.FreePhysicalMemory / 1MB, 2)
     Log "RAM disponibil aproximativ: $availableGB GiB."
-    $nvidia = Get-Command nvidia-smi.exe -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
-    if (-not $nvidia) { throw 'Driverul NVIDIA sau nvidia-smi nu este disponibil. Instaleaza driverul NVIDIA pentru placa video.' }
-    $gpuLines = @(& $nvidia.Source --query-gpu=index,name,uuid,memory.total,driver_version --format=csv,noheader,nounits 2>&1)
+    $nvidia = Enable-NvidiaSmi
+    if (-not $nvidia) { throw 'nvidia-smi nu a fost gasit. Verifica driverul sau seteaza IGX_NVIDIA_SMI_PATH la calea absoluta catre nvidia-smi.exe.' }
+    Log "NVIDIA-SMI: $nvidia"
+    $gpuLines = @(& $nvidia --query-gpu=index,name,uuid,memory.total,driver_version --format=csv,noheader,nounits 2>&1)
     if ($LASTEXITCODE -ne 0) { throw "nvidia-smi a esuat: $gpuLines" }
     foreach ($line in $gpuLines) { Log "GPU: $line" }
     $selectedGpu = Select-SetupGpu $gpuLines $env:IGX_GPU_DEVICE 9000
