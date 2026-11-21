@@ -2,7 +2,6 @@
 .toolchain/
 go-toolchain.zip
 out/
-start-url.txt
 models/
 runtime/
 bench/results/
