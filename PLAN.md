@@ -257,3 +257,47 @@ recipe evaluation do not change because this only removes repeated input.
 Status: implemented with a gitignored root URL file, interactive fallback,
 README instructions and Windows launcher fixtures for legacy and setup-ready
 paths. Focused test and diff-check results are recorded in the task response.
+
+## Multi-GPU selection correction
+
+The target setup log reports a GTX 1650 with 4096 MiB followed by an RTX 3080
+with 10240 MiB. Setup incorrectly checks only the first GPU and rejects the
+machine; the runtime also defaults to `gpu.device: 0`. Fix both paths rather
+than merely bypassing the preflight or assuming matching CUDA and NVIDIA-SMI
+device ordinals.
+
+1. Enumerate and log physical GPU identity, index and VRAM during setup;
+   recognize a suitable 9000 MB-budget device even when it is not first.
+   Clearly identify the selected device and fail explicitly if no appropriate
+   device exists or selection is ambiguous. Preserve the configured budget,
+   do not stop other processes, and do not silently overwrite user settings.
+2. Make selection reproducible at runtime using the existing central
+   `gpu.device` configuration and `IGX_GPU_DEVICE` override. Document the
+   target-machine selection and how to identify the RTX 3080; retain existing
+   explicit settings and ensure setup does not imply runtime selection was
+   changed when it has not been.
+3. Ensure managed llama.cpp offloads only to the intended physical GPU; map
+   the configured NVIDIA-SMI device to a stable physical identity for the
+   process, rather than assuming CUDA and NVIDIA-SMI ordinals match. Ensure
+   monitoring continues to query that same physical device, and account for
+   pre-existing visibility restrictions with an explicit error instead of
+   silently selecting a different GPU. CPU Whisper and Tesseract remain
+   unchanged. Ollama remains optional and externally managed.
+4. Add isolated tests for the reported two-GPU case, no suitable device,
+   malformed/missing devices, explicit selection and existing environment
+   overrides. Test the managed subprocess arguments/environment and monitor
+   target without requiring NVIDIA hardware; run focused Go and PowerShell
+   tests and update README and DECISIONS. No fake test can prove actual GPU
+   placement, VRAM peak, CUDA/model compatibility or reel accuracy.
+
+The existing architecture, local-first policy, sequential scheduling, 9000 MB
+budget and Ollama-versus-llama.cpp decision remain unchanged. Actual RAM/VRAM,
+5/10/15-second benchmarks and annotated recipe accuracy remain target-machine
+validation gates. Do not equate reported total VRAM with currently free VRAM.
+
+Implementation: setup reports the unique suitable GPU and instructs the user
+to set its NVIDIA-SMI index in the canonical config; multiple eligible devices
+require an explicit `IGX_GPU_DEVICE`. Managed llama.cpp resolves the configured
+index to a UUID, validates physical capacity and restricts its subprocess to
+that UUID with GPU splitting disabled. Runtime monitoring uses the same
+physical index. These checks do not prove actual target-machine placement.

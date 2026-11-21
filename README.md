@@ -51,7 +51,7 @@ ffmpeg/ffprobe and Tesseract. These checks do not certify live models.
 
 1. On Windows x64, install a compatible NVIDIA driver first and ensure
    `nvidia-smi` works. An RTX 3080 with 10 GB VRAM is the target; setup checks
-   the first GPU against the 9000 MB budget. Have Internet access to GitHub,
+   the reported GPUs against the 9000 MB target budget. Have Internet access to GitHub,
    conda-forge, PyPI, Hugging Face and Go's module services.
 2. Double-click `setup.bat`. It reports GPU, available RAM, model sizes and
    estimated disk space. Review the model licenses and type `DA` to approve the
@@ -63,6 +63,22 @@ ffmpeg/ffprobe and Tesseract. These checks do not certify live models.
 3. If setup succeeds, double-click `start.bat`; paste the Instagram URL only
    when no saved URL is configured below. The window stays open. Instagram
    access or login may still require separate configuration.
+
+On a multi-GPU machine, setup logs the eligible NVIDIA-SMI index but does not
+change the config. Set `gpu.device` in `configs/config.yaml` to the index shown
+for the RTX 3080 (or use `IGX_GPU_DEVICE`). Check the index in the current
+`nvidia-smi` output; the device order may change. If multiple GPUs meet the
+target budget, set `IGX_GPU_DEVICE` before running setup. Managed llama.cpp
+resolves that physical NVIDIA-SMI index to a GPU UUID and restricts CUDA to that
+GPU. An existing `CUDA_VISIBLE_DEVICES` must be unset or equal to that UUID;
+conflicting restrictions cause an explicit error. External inference servers
+and optional Paddle GPU OCR must be configured separately.
+
+`nvidia-smi` must be on PATH for setup, managed llama.cpp and optional GPU
+monitoring. If using a temporary PATH workaround, start `start.bat` in the same
+PowerShell window as setup; a later double-click does not inherit that window.
+The setup checks total VRAM, not currently free VRAM, and does not prove that
+the models or actual workload fit.
 
 To retest the same reel without entering it every time, create `start-url.txt`
 in the repository root and paste the URL on one line. `start.bat` will use it

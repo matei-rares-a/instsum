@@ -3,6 +3,8 @@ package gpu
 import (
 	"context"
 	"fmt"
+	"math"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
@@ -10,6 +12,30 @@ import (
 
 	"instsum/internal/tool"
 )
+
+var gpuUUID = regexp.MustCompile(`^GPU-[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$`)
+
+// DeviceUUID resolves an NVIDIA-SMI index without relying on CUDA device ordering.
+func DeviceUUID(ctx context.Context, runner tool.Runner, device, budgetMB int) (string, error) {
+	query, cancel := context.WithTimeout(ctx, 3*time.Second)
+	defer cancel()
+	b, err := runner.Run(query, "nvidia-smi", "-i", strconv.Itoa(device), "--query-gpu=uuid,memory.total", "--format=csv,noheader,nounits")
+	if err != nil {
+		return "", fmt.Errorf("resolve gpu.device %d with nvidia-smi: %w", device, err)
+	}
+	fields := strings.Split(strings.TrimSpace(string(b)), ",")
+	if len(fields) != 2 || !gpuUUID.MatchString(strings.TrimSpace(fields[0])) {
+		return "", fmt.Errorf("invalid NVIDIA GPU identity for gpu.device %d: %q", device, strings.TrimSpace(string(b)))
+	}
+	memoryMiB, err := strconv.ParseFloat(strings.TrimSpace(fields[1]), 64)
+	if err != nil || math.IsNaN(memoryMiB) || math.IsInf(memoryMiB, 0) || memoryMiB <= 0 {
+		return "", fmt.Errorf("invalid NVIDIA GPU memory for gpu.device %d: %q", device, strings.TrimSpace(fields[1]))
+	}
+	if memoryMiB*1.048576 < float64(budgetMB) {
+		return "", fmt.Errorf("gpu.device %d has %.0f MB, below gpu.vram_budget_mb %d; select a suitable GPU", device, memoryMiB*1.048576, budgetMB)
+	}
+	return strings.TrimSpace(fields[0]), nil
+}
 
 type Sample struct {
 	UsedMB  float64

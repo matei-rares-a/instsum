@@ -18,11 +18,26 @@ $env:PATH = "$p;$env:PATH"
    Modificarea PATH este temporara, doar pentru aceasta fereastra.
    Setup va cere confirmare inainte de descarcari. Nu inchide fereastra.
 
-4. Daca la pasul 2 apare o eroare, nu executa pasul 3.
+4. Setup afiseaza indexul placii eligibile. Pentru a folosi aceeasi placa la
+   inferenta, deschide configuratia:
+
+notepad .\configs\config.yaml
+
+   La sectiunea gpu, modifica device la indexul afisat pentru RTX 3080.
+   De exemplu, daca setup afiseaza index 1:
+
+  device: 1
+
+   Salveaza si inchide Notepad. Dupa instalare, porneste aplicatia din
+   aceeasi fereastra PowerShell, astfel incat sa pastreze PATH temporar:
+
+.\start.bat
+
+5. Daca la pasul 2 apare o eroare, nu executa pasul 3.
    Copiaza eroarea sau trimite o captura. Nu stim inca daca acel director
    contine versiunea activa a driverului.
 
-5. Daca setup se opreste cu alta eroare, trimite cel mai nou fisier
+6. Daca setup se opreste cu alta eroare, trimite cel mai nou fisier
    logs\setup-*.log. Verifica jurnalul inainte de a-l trimite: poate
    contine cai personale sau alte date sensibile. Nu trimite parole,
    cookie-uri sau token-uri.

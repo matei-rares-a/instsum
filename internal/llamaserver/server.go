@@ -14,6 +14,8 @@ import (
 	"time"
 
 	"instsum/internal/config"
+	"instsum/internal/gpu"
+	"instsum/internal/tool"
 )
 
 type Server struct {
@@ -23,6 +25,10 @@ type Server struct {
 }
 
 func Start(ctx context.Context, c config.Config, model string, dir string) (*Server, error) {
+	return start(ctx, c, model, dir, tool.Exec{})
+}
+
+func start(ctx context.Context, c config.Config, model string, dir string, runner tool.Runner) (*Server, error) {
 	if !c.Llama.Manage {
 		return nil, nil
 	}
@@ -62,16 +68,28 @@ func Start(ctx context.Context, c config.Config, model string, dir string) (*Ser
 			return nil, fmt.Errorf("model file %s: %w; configure models.%s", path, e, model)
 		}
 	}
+	uuid, e := gpu.DeviceUUID(ctx, runner, c.GPU.Device, c.GPU.Budget)
+	if e != nil {
+		return nil, e
+	}
+	if visible, ok := os.LookupEnv("CUDA_VISIBLE_DEVICES"); ok && visible != uuid {
+		return nil, fmt.Errorf("CUDA_VISIBLE_DEVICES conflicts with gpu.device %d (%s); unset it or set it to that UUID", c.GPU.Device, uuid)
+	}
 	log, e := os.OpenFile(filepath.Join(dir, "llama-server.log"), os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0644)
 	if e != nil {
 		return nil, e
 	}
-	args := []string{"-m", m.GGUFPath, "--host", u.Hostname(), "--port", port, "-c", strconv.Itoa(c.VLM.Context), "-ngl", "99", "--main-gpu", strconv.Itoa(c.GPU.Device)}
+	if _, e = fmt.Fprintf(log, "Selected NVIDIA GPU %d: %s\n", c.GPU.Device, uuid); e != nil {
+		log.Close()
+		return nil, fmt.Errorf("write llama-server GPU selection: %w", e)
+	}
+	args := []string{"-m", m.GGUFPath, "--host", u.Hostname(), "--port", port, "-c", strconv.Itoa(c.VLM.Context), "-ngl", "99", "--split-mode", "none", "--main-gpu", "0"}
 	if m.MMProjPath != "" {
 		args = append(args, "--mmproj", m.MMProjPath)
 	}
 	// Startup context bounds readiness; the caller explicitly owns server lifetime.
 	cmd := exec.Command(c.Llama.Executable, args...)
+	cmd.Env = append(os.Environ(), "CUDA_VISIBLE_DEVICES="+uuid)
 	cmd.Stdout = log
 	cmd.Stderr = log
 	if e = cmd.Start(); e != nil {

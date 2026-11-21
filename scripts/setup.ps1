@@ -106,11 +106,29 @@ function ModelUrl([string]$repo, [string]$revision, [string]$name) {
     return "https://huggingface.co/$repo/resolve/$revision/$escaped"
 }
 
-function Get-PrimaryGpuMemoryMB([string[]]$lines) {
+function Select-SetupGpu([string[]]$lines, [string]$requested, [int]$budget) {
     if ($lines.Count -eq 0) { throw 'nvidia-smi nu a raportat niciun GPU.' }
-    $parts = $lines[0].Split(',')
-    if ($parts.Count -lt 3) { throw 'Nu pot interpreta datele NVIDIA.' }
-    return [double]::Parse($parts[1].Trim(), [Globalization.CultureInfo]::InvariantCulture) * 1.048576
+    $gpus = @()
+    foreach ($line in $lines) {
+        $parts = $line.Split(',')
+        if ($parts.Count -ne 5 -or $parts[0].Trim() -notmatch '^\d+$' -or
+            $parts[2].Trim() -notmatch '^GPU-[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}$') {
+            throw "Nu pot interpreta datele NVIDIA: $line"
+        }
+        $memory = [double]::Parse($parts[3].Trim(), [Globalization.CultureInfo]::InvariantCulture) * 1.048576
+        if ([double]::IsNaN($memory) -or [double]::IsInfinity($memory) -or $memory -le 0) { throw "Memorie GPU invalida: $line" }
+        $gpus += [pscustomobject]@{ index = [int]$parts[0].Trim(); name = $parts[1].Trim(); uuid = $parts[2].Trim(); memory = $memory }
+    }
+    if (-not [string]::IsNullOrWhiteSpace($requested)) {
+        if ($requested -notmatch '^\d+$') { throw 'IGX_GPU_DEVICE trebuie sa fie un index NVIDIA valid.' }
+        $eligible = @($gpus | Where-Object { $_.index -eq [int]$requested -and $_.memory -ge $budget })
+    } else {
+        $eligible = @($gpus | Where-Object { $_.memory -ge $budget })
+    }
+    if ($eligible.Count -ne 1) {
+        throw "Nu exista exact un GPU eligibil pentru $budget MB. Verifica GPU-urile afisate si seteaza IGX_GPU_DEVICE la indexul dorit."
+    }
+    return $eligible[0]
 }
 
 try {
@@ -134,11 +152,12 @@ try {
     Log "RAM disponibil aproximativ: $availableGB GiB."
     $nvidia = Get-Command nvidia-smi.exe -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
     if (-not $nvidia) { throw 'Driverul NVIDIA sau nvidia-smi nu este disponibil. Instaleaza driverul NVIDIA pentru placa video.' }
-    $gpuLines = @(& $nvidia.Source --query-gpu=name,memory.total,driver_version --format=csv,noheader,nounits 2>&1)
+    $gpuLines = @(& $nvidia.Source --query-gpu=index,name,uuid,memory.total,driver_version --format=csv,noheader,nounits 2>&1)
     if ($LASTEXITCODE -ne 0) { throw "nvidia-smi a esuat: $gpuLines" }
     foreach ($line in $gpuLines) { Log "GPU: $line" }
-    $gpuMB = Get-PrimaryGpuMemoryMB $gpuLines
-    if ($gpuMB -lt 9000) { throw "Primul GPU are $([math]::Round($gpuMB)) MB; bugetul configurat este 9000 MB." }
+    $selectedGpu = Select-SetupGpu $gpuLines $env:IGX_GPU_DEVICE 9000
+    Log "GPU eligibil: index $($selectedGpu.index), $($selectedGpu.name), $($selectedGpu.uuid)."
+    Log "Setup nu modifica configuratia: seteaza gpu.device la $($selectedGpu.index) in configs\config.yaml pentru a folosi acest GPU la inferenta."
 
     $visionRepo = 'ggml-org/Qwen2.5-VL-7B-Instruct-GGUF'
     $whisperRepo = 'ggerganov/whisper.cpp'

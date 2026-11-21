@@ -62,6 +62,10 @@ the target GPU budget remain unverified. For this experiment, model checksums
 come from the official Hugging Face metadata at the recorded repository
 revision, not from an independently pre-pinned model manifest. The existing
 manual model download script remains the local/mirror alternative.
+For managed llama.cpp, `gpu.device` denotes a physical NVIDIA-SMI index. Resolve
+that device to its UUID and restrict the owned CUDA subprocess to it; do not
+assume CUDA and NVIDIA-SMI enumerate devices in the same order. Setup reports
+eligible devices without silently modifying the user's GPU configuration.
 
 This is the primary project specification, not a step-by-step script. It is VERY
 IMPORTANT that you:

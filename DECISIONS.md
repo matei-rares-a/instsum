@@ -77,6 +77,11 @@ model accuracy, ONNX/CUDA ABI compatibility or peak VRAM.
   API metadata at setup time. This checks downloads against the same source, not
   independent pre-pinned model hashes; compatibility and licenses remain to be
   checked on the target machine. Conda packages are not fully lockfile-pinned.
+* On multi-GPU machines setup reports eligible NVIDIA-SMI indices without
+  rewriting `gpu.device`. Managed llama.cpp resolves the selected physical
+  index to a UUID, limits the owned CUDA process to that GPU, and rejects
+  conflicting CUDA visibility restrictions; monitoring retains the physical
+  NVIDIA-SMI index. This mapping does not configure externally managed engines.
 
 ## Validation boundaries
 

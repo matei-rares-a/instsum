@@ -5,7 +5,7 @@ $tokens = $null
 $errors = $null
 $ast = [Management.Automation.Language.Parser]::ParseFile($setup, [ref]$tokens, [ref]$errors)
 if ($errors.Count -ne 0) { throw "Setup parser errors: $errors" }
-foreach ($name in @('Download', 'Expand-VerifiedZip', 'Select-ModelFile', 'Get-PrimaryGpuMemoryMB', 'Run')) {
+foreach ($name in @('Download', 'Expand-VerifiedZip', 'Select-ModelFile', 'Select-SetupGpu', 'Run')) {
     $definition = $ast.Find({ param($node) $node -is [Management.Automation.Language.FunctionDefinitionAst] -and $node.Name -eq $name }, $true)
     if (-not $definition) { throw "Missing function $name" }
     Invoke-Expression $definition.Extent.Text
@@ -34,9 +34,14 @@ try {
     Assert-Fails { Select-ModelFile $metadata 'model' 'model' }
     $metadata.siblings = @([pscustomobject]@{ rfilename='model.gguf'; size=123; lfs=@{} })
     Assert-Fails { Select-ModelFile $metadata 'model' 'model' }
-    $singleGpu = @( 'NVIDIA RTX 3080, 10240, 555.1' )
-    if ([math]::Round((Get-PrimaryGpuMemoryMB $singleGpu), 2) -ne 10737.42) { throw 'Single GPU parsing failed.' }
-    Assert-Fails { Get-PrimaryGpuMemoryMB @('not a valid GPU line') }
+    $gpus = @('0, GTX 1650, GPU-aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa, 4096, 555.1', '1, RTX 3080, GPU-bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb, 10240, 555.1')
+    if ((Select-SetupGpu $gpus '' 9000).index -ne 1) { throw 'Wrong GPU selected.' }
+    if ((Select-SetupGpu $gpus '1' 9000).index -ne 1) { throw 'Explicit selection failed.' }
+    Assert-Fails { Select-SetupGpu $gpus '0' 9000 }
+    Assert-Fails { Select-SetupGpu $gpus '2' 9000 }
+    Assert-Fails { Select-SetupGpu @('not a valid GPU line') '' 9000 }
+    Assert-Fails { Select-SetupGpu @($gpus[0]) '' 9000 }
+    Assert-Fails { Select-SetupGpu @($gpus[1], $gpus[1]) '' 9000 }
     Run $env:ComSpec @('/d', '/c', 'exit', '0')
     Assert-Fails { Run $env:ComSpec @('/d', '/c', 'exit', '7') }
 
