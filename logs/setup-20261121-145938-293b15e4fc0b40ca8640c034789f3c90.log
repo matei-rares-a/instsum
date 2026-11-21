@@ -1,0 +1,310 @@
+Setup experimental - 2026-11-21 14:59:38 +02:00
+Jurnal: D:\aaaa\git\instsum\logs\setup-20261121-145938-293b15e4fc0b40ca8640c034789f3c90.log
+Fisierele pot contine cai personale. Verifica jurnalul inainte de a-l trimite.
+RAM disponibil aproximativ: 19.52 GiB.
+GPU: 0, NVIDIA GeForce GTX 1650, GPU-0fcac00b-e34c-a262-90d0-a1edd13382cd, 4096, 621.24
+GPU: 1, NVIDIA GeForce RTX 3080, GPU-9194efb5-5fa4-4200-593b-95d6fc77d740, 10240, 621.24
+GPU eligibil: index 1, NVIDIA GeForce RTX 3080, GPU-9194efb5-5fa4-4200-593b-95d6fc77d740.
+Setup nu modifica configuratia: seteaza gpu.device la 1 in configs\config.yaml pentru a folosi acest GPU la inferenta.
+Verific metadatele oficiale: https://huggingface.co/api/models/ggml-org/Qwen2.5-VL-7B-Instruct-GGUF?blobs=true
+Verific metadatele oficiale: https://huggingface.co/api/models/ggerganov/whisper.cpp?blobs=true
+Model: Qwen2.5-VL-7B-Instruct-Q4_K_M.gguf; 4.36 GiB; SHA-256 9258bf05b12686d097ff3b6b18d968ab393649780aa2b3cd67fec43d50554392
+Model: mmproj-Qwen2.5-VL-7B-Instruct-f16.gguf; 1.26 GiB; SHA-256 c24a7f5fcfc68286f0a217023b6738e73bea4f11787a43e8238d4bb1b8604cde
+Model: ggml-large-v3-turbo.bin; 1.51 GiB; SHA-256 1fc70f774d38eb169993ac391eea357ef47c88757ef72ee5943879b7e8e2bc69
+Revizii Hugging Face: vision=508edd0afaa66bb9e9f40587acc2184f02daf1f6; whisper=5359861c739e955e79d9a303bcbc70fb988958b1
+Spatiu liber: 190.85 GiB; necesar estimat inclusiv temporare: 17.14 GiB.
+Vor fi descarcate modele de mai multi GB, instrumente si pachete din GitHub, conda-forge, PyPI si Hugging Face.
+Verifica licentele modelelor si faptul ca ai permisiunea de a descarca si utiliza aceste resurse.
+Folosesc fisierul verificat: D:\aaaa\git\instsum\runtime\setup-v1\downloads\go.zip
+Folosesc fisierul verificat: D:\aaaa\git\instsum\runtime\setup-v1\downloads\micromamba.exe
+Folosesc fisierul verificat: D:\aaaa\git\instsum\runtime\setup-v1\downloads\llama.zip
+Folosesc fisierul verificat: D:\aaaa\git\instsum\runtime\setup-v1\downloads\cudart.zip
+Folosesc fisierul verificat: D:\aaaa\git\instsum\runtime\setup-v1\downloads\whisper.zip
+Folosesc fisierul verificat: D:\aaaa\git\instsum\runtime\setup-v1\downloads\gallery_dl-1.32.20-py3-none-any.whl
+Folosesc fisierul verificat: D:\aaaa\git\instsum\runtime\setup-v1\downloads\eng.traineddata
+Folosesc fisierul verificat: D:\aaaa\git\instsum\runtime\setup-v1\downloads\ron.traineddata
+Descarc: https://huggingface.co/ggml-org/Qwen2.5-VL-7B-Instruct-GGUF/resolve/508edd0afaa66bb9e9f40587acc2184f02daf1f6/Qwen2.5-VL-7B-Instruct-Q4_K_M.gguf
+Descarc: https://huggingface.co/ggml-org/Qwen2.5-VL-7B-Instruct-GGUF/resolve/508edd0afaa66bb9e9f40587acc2184f02daf1f6/mmproj-Qwen2.5-VL-7B-Instruct-f16.gguf
+Descarc: https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-large-v3-turbo.bin
+Fetch Shard Index for conda-forge/noarch                                                        Γºû Starting
+Fetch Shard Index for conda-forge/noarch                                                  Γ£ö Done (0.2 sec)
+Fetch Shard Index for conda-forge/win-64                                                        Γºû Starting
+Fetch Shard Index for conda-forge/win-64                                                  Γ£ö Done (0.1 sec)
+Fetching and Parsing Packages' Shards                                                           Γºû Starting
+Fetching and Parsing Packages' Shards                                                     Γ£ö Done (3.1 sec)
+
+Resolving Environment                                                                           Γºû Starting
+Resolving Environment                                                                     Γ£ö Done (0.3 sec)
+
+Transaction
+
+  Prefix: D:\aaaa\git\instsum\runtime\setup-v1\env
+
+  Updating specs:
+
+   - python=3.12
+   - pip
+   - pyyaml
+   - requests
+   - ffmpeg
+   - tesseract
+   - yt-dlp=2026.10.26
+   - instaloader=4.14.1
+
+
+  Package                           Version  Build               Channel          Size
+----------------------------------------------------------------------------------------
+  Install:
+----------------------------------------------------------------------------------------
+
+  + _python_abi3_support                1.0  hd8ed1ab_3          conda-forge       8kB
+  + aom                              3.15.3  pl5321h06fc181_0    conda-forge       2MB
+  + bzip2                             1.0.8  h0ad9c76_10         conda-forge      56kB
+  + ca-certificates              2026.11.20  h4c7d964_0          conda-forge     124kB
+  + cairo                            1.18.6  h477c42c_0          conda-forge       2MB
+  + certifi                      2026.11.20  pyhd8ed1ab_0        conda-forge      14kB
+  + charset-normalizer                3.5.2  h308a848_0          conda-forge     175kB
+  + cpython                         3.12.16  py312hd8ed1ab_0     conda-forge      47kB
+  + ffmpeg                            9.0.2  gpl_h666c9b3_908    conda-forge      12MB
+  + font-ttf-dejavu-sans-mono          2.37  hab24e00_0          conda-forge     397kB
+  + font-ttf-inconsolata              3.000  h77eed37_0          conda-forge      97kB
+  + font-ttf-source-code-pro          2.038  h77eed37_0          conda-forge     701kB
+  + font-ttf-ubuntu                    0.83  h77eed37_4          conda-forge       2MB
+  + fontconfig                       2.18.4  hbf4c354_0          conda-forge     219kB
+  + fonts-conda-ecosystem                 1  0                   conda-forge       4kB
+  + fonts-conda-forge                     1  hc364b38_1          conda-forge       4kB
+  + freetype                         2.14.3  h57928b3_2          conda-forge     187kB
+  + fribidi                          1.0.18  hfd05255_0          conda-forge      68kB
+  + gdk-pixbuf                       2.44.8  h0db38d4_3          conda-forge     629kB
+  + giflib                            6.1.3  h918f4b6_2          conda-forge      84kB
+  + glib                             2.90.1  h1d002d9_3          conda-forge      77kB
+  + glib-tools                       2.90.1  h8d9a05b_3          conda-forge     252kB
+  + graphite2                        1.3.15  h5112557_1          conda-forge      98kB
+  + icu                                78.3  h5112557_2          conda-forge      17MB
+  + idna                               3.20  pyh5ded981_0        conda-forge     179kB
+  + instaloader                      4.14.1  pyhd8ed1ab_1        conda-forge      61kB
+  + krb5                             1.22.2  h719d79b_2          conda-forge     753kB
+  + lame                                4.0  h0c5f640_1          conda-forge     360kB
+  + leptonica                        1.87.0  h5b5c448_2          conda-forge       1MB
+  + lerc                              4.3.0  hd936e49_0          conda-forge     174kB
+  + libarchive                       3.8.11  gpl_hcdebe0b_101    conda-forge       1MB
+  + libbrotlicommon                   1.2.1  hf02afa3_1          conda-forge      82kB
+  + libbrotlidec                      1.2.1  h84f9c24_1          conda-forge      35kB
+  + libbrotlienc                      1.2.1  he2a975b_1          conda-forge     253kB
+  + libcurl                          8.23.0  hdb0ef4a_0          conda-forge     420kB
+  + libdav1d                          1.5.5  h11686cb_0          conda-forge      17kB
+  + libdav1d7                         1.5.5  h7a3f0e1_0          conda-forge     713kB
+  + libdeflate                         1.26  h1a1d4e4_0          conda-forge     158kB
+  + libexpat                          2.9.0  hac47afa_0          conda-forge      73kB
+  + libffi                            3.7.0  h3d046cb_1          conda-forge      50kB
+  + libfreetype                      2.14.3  h57928b3_2          conda-forge       9kB
+  + libfreetype6                     2.14.3  hdbac1cb_2          conda-forge     340kB
+  + libglib                          2.90.1  h8c856d3_3          conda-forge       5MB
+  + libharfbuzz                      15.0.0  h03b5201_0          conda-forge       1MB
+  + libharfbuzz-devel                15.0.0  h03b5201_0          conda-forge     296kB
+  + libhwy                            1.4.0  h2419aca_2          conda-forge     568kB
+  + libiconv                           1.18  hc1393d2_3          conda-forge     695kB
+  + libintl                          0.22.5  h5728263_4          conda-forge      97kB
+  + libintl-devel                    0.22.5  h5728263_4          conda-forge      42kB
+  + libjpeg-turbo                     3.2.1  hfd05255_0          conda-forge     991kB
+  + libjxl                           0.13.0  h932607e_0          conda-forge       1MB
+  + liblzma                           5.8.3  hfd05255_1          conda-forge     106kB
+  + libogg                            1.3.5  h2466b09_1          conda-forge      35kB
+  + libopus                           1.6.1  h6a83c73_1          conda-forge     308kB
+  + libpango                         1.58.2  h02b4fad_3          conda-forge     313kB
+  + libpango-devel                   1.58.2  h7637d1b_3          conda-forge     233kB
+  + libpng                           1.6.59  hdc8cecf_0          conda-forge     386kB
+  + libpsl                           0.23.1  h9b16d47_1          conda-forge      74kB
+  + libpython                       3.12.16  hfb4101e_0_cpython  conda-forge      47kB
+  + librsvg                          2.62.4  h5506a08_0          conda-forge       6MB
+  + libsqlite                        3.54.1  hf5d6505_101        conda-forge       1MB
+  + libssh2                          1.11.1  h734d217_2          conda-forge     300kB
+  + libtiff                           4.7.2  hef6d50c_2          conda-forge       1MB
+  + libusb                           1.0.30  h6a83c73_1          conda-forge     123kB
+  + libvorbis                         1.3.7  h5112557_2          conda-forge     243kB
+  + libvulkan-loader              1.4.357.0  h477610d_2          conda-forge     289kB
+  + libwebp-base                      1.6.0  h4d5522a_1          conda-forge     279kB
+  + libxml2                          2.15.4  he095d88_1          conda-forge      44kB
+  + libxml2-16                       2.15.4  h3cfd58e_1          conda-forge     516kB
+  + libzlib                           1.3.2  hfd05255_3          conda-forge      59kB
+  + lz4-c                            1.11.1  h6a83c73_0          conda-forge     171kB
+  + lzo                                2.10  h6a83c73_1003       conda-forge     165kB
+  + mpg123                           1.33.7  ha58212f_1          conda-forge     267kB
+  + openh264                          2.7.0  h1eab103_0          conda-forge     424kB
+  + openjpeg                          2.5.4  h90fa87c_2          conda-forge     275kB
+  + openssl                           3.6.5  hf411b9b_0          conda-forge       9MB
+  + packaging                          26.3  pyhc364b38_0        conda-forge     116kB
+  + pango                            1.58.2  h4350c2a_3          conda-forge      15kB
+  + pcre2                             10.49  h8466c1e_0          conda-forge       1MB
+  + pip                              26.2.2  pyh8b19718_2        conda-forge       1MB
+  + pixman                           0.46.4  h5112557_3          conda-forge     257kB
+  + python                          3.12.16  hb12b558_0_cpython  conda-forge      16MB
+  + python-gil                      3.12.16  hd8ed1ab_0          conda-forge      47kB
+  + python_abi                         3.12  9_cp312             conda-forge       7kB
+  + pyyaml                            6.0.3  py312h6fa65f5_4     conda-forge     197kB
+  + requests                         2.34.2  pyhcf101f3_0        conda-forge      69kB
+  + sdl2                            2.32.56  h5112557_1          conda-forge     573kB
+  + sdl3                             3.4.20  h5112557_2          conda-forge       2MB
+  + setuptools                       84.2.1  pyhe730653_0        conda-forge     567kB
+  + svt-av1                           4.3.0  hac47afa_0          conda-forge       2MB
+  + tesseract                         5.5.4  h8c7c6a5_0          conda-forge     179MB
+  + tk                               8.6.13  h967ab96_4          conda-forge       4MB
+  + tzdata                            2026e  h5d301ff_0          conda-forge     119kB
+  + ucrt                       10.0.26100.0  h57928b3_0          conda-forge     695kB
+  + urllib3                           2.8.0  pyh5ded981_1        conda-forge     113kB
+  + vc                                 14.5  hda273ae_44         conda-forge      18kB
+  + vc14_runtime                14.51.36247  hb06f545_44         conda-forge     841kB
+  + vcomp14                     14.51.36247  h1c3f1cb_44         conda-forge     167kB
+  + wheel                            0.48.0  pyhd8ed1ab_0        conda-forge      35kB
+  + x264                         1!164.3095  pl5321h71a6e3e_3    conda-forge     882kB
+  + x265                                3.5  h3ee6617_4          conda-forge       3MB
+  + yaml                              0.2.5  h6a83c73_3          conda-forge      64kB
+  + yt-dlp                       2026.10.26  pyh5ded981_0        conda-forge       2MB
+  + yt-dlp-ejs                        0.8.0  pyh5ded981_1        conda-forge      58kB
+  + zlib                              1.3.2  hfd05255_3          conda-forge     851kB
+  + zstd                              1.5.7  h534d264_7          conda-forge     388kB
+
+  Summary:
+
+  Install: 106 packages
+
+  Total download: 291MB
+
+----------------------------------------------------------------------------------------
+
+
+warning  libmamba Security Warning: This transaction includes executing package scripts (pre/post-link/unlink) if present. These scripts can contain arbitrary code. Please ensure you trust the package sources.
+
+Transaction starting
+Linking ucrt-10.0.26100.0-h57928b3_0
+Linking vcomp14-14.51.36247-h1c3f1cb_44
+Linking vc14_runtime-14.51.36247-hb06f545_44
+Linking vc-14.5-hda273ae_44
+Linking graphite2-1.3.15-h5112557_1
+Linking x264-1!164.3095-pl5321h71a6e3e_3
+Linking mpg123-1.33.7-ha58212f_1
+Linking lzo-2.10-h6a83c73_1003
+Linking libusb-1.0.30-h6a83c73_1
+Linking fribidi-1.0.18-hfd05255_0
+Linking libogg-1.3.5-h2466b09_1
+Linking libvulkan-loader-1.4.357.0-h477610d_2
+Linking libdav1d7-1.5.5-h7a3f0e1_0
+Linking libopus-1.6.1-h6a83c73_1
+Linking x265-3.5-h3ee6617_4
+Linking yaml-0.2.5-h6a83c73_3
+Linking libwebp-base-1.6.0-h4d5522a_1
+Linking lz4-c-1.11.1-h6a83c73_0
+Linking libdeflate-1.26-h1a1d4e4_0
+Linking lerc-4.3.0-hd936e49_0
+Linking giflib-6.1.3-h918f4b6_2
+Linking bzip2-1.0.8-h0ad9c76_10
+Linking libsqlite-3.54.1-hf5d6505_101
+Linking liblzma-5.8.3-hfd05255_1
+Linking tk-8.6.13-h967ab96_4
+Linking libffi-3.7.0-h3d046cb_1
+Linking libiconv-1.18-hc1393d2_3
+Linking pixman-0.46.4-h5112557_3
+Linking icu-78.3-h5112557_2
+Linking libzlib-1.3.2-hfd05255_3
+Linking libbrotlicommon-1.2.1-hf02afa3_1
+Linking libhwy-1.4.0-h2419aca_2
+Linking libjpeg-turbo-3.2.1-hfd05255_0
+Linking libpython-3.12.16-hfb4101e_0_cpython
+Linking openh264-2.7.0-h1eab103_0
+Linking libexpat-2.9.0-hac47afa_0
+Linking aom-3.15.3-pl5321h06fc181_0
+Linking svt-av1-4.3.0-hac47afa_0
+Linking lame-4.0-h0c5f640_1
+Linking libvorbis-1.3.7-h5112557_2
+Linking sdl3-3.4.20-h5112557_2
+Linking libdav1d-1.5.5-h11686cb_0
+Linking libintl-0.22.5-h5728263_4
+Linking libpsl-0.23.1-h9b16d47_1
+Linking zstd-1.5.7-h534d264_7
+Linking zlib-1.3.2-hfd05255_3
+Linking libxml2-16-2.15.4-h3cfd58e_1
+Linking pcre2-10.49-h8466c1e_0
+Linking libpng-1.6.59-hdc8cecf_0
+Linking libbrotlienc-1.2.1-he2a975b_1
+Linking libbrotlidec-1.2.1-h84f9c24_1
+Linking sdl2-2.32.56-h5112557_1
+Linking libintl-devel-0.22.5-h5728263_4
+Linking libtiff-4.7.2-hef6d50c_2
+Linking libxml2-2.15.4-he095d88_1
+Linking libglib-2.90.1-h8c856d3_3
+Linking libfreetype6-2.14.3-hdbac1cb_2
+Linking libjxl-0.13.0-h932607e_0
+Linking openjpeg-2.5.4-h90fa87c_2
+Linking glib-tools-2.90.1-h8d9a05b_3
+Linking gdk-pixbuf-2.44.8-h0db38d4_3
+Linking libfreetype-2.14.3-h57928b3_2
+Linking leptonica-1.87.0-h5b5c448_2
+Linking freetype-2.14.3-h57928b3_2
+Linking fontconfig-2.18.4-hbf4c354_0
+Linking tzdata-2026e-h5d301ff_0
+Linking python_abi-3.12-9_cp312
+Linking font-ttf-dejavu-sans-mono-2.37-hab24e00_0
+Linking font-ttf-inconsolata-3.000-h77eed37_0
+Linking font-ttf-source-code-pro-2.038-h77eed37_0
+Linking font-ttf-ubuntu-0.83-h77eed37_4
+Linking ca-certificates-2026.11.20-h4c7d964_0
+Linking fonts-conda-forge-1-hc364b38_1
+Linking fonts-conda-ecosystem-1-0
+Linking openssl-3.6.5-hf411b9b_0
+Linking cairo-1.18.6-h477c42c_0
+Linking libssh2-1.11.1-h734d217_2
+Linking krb5-1.22.2-h719d79b_2
+Linking libarchive-3.8.11-gpl_hcdebe0b_101
+Linking python-3.12.16-hb12b558_0_cpython
+Linking libharfbuzz-15.0.0-h03b5201_0
+Linking libcurl-8.23.0-hdb0ef4a_0
+Linking pyyaml-6.0.3-py312h6fa65f5_4
+Linking libpango-1.58.2-h02b4fad_3
+Linking tesseract-5.5.4-h8c7c6a5_0
+Linking cpython-3.12.16-py312hd8ed1ab_0
+Linking setuptools-84.2.1-pyhe730653_0
+Linking urllib3-2.8.0-pyh5ded981_1
+Linking idna-3.20-pyh5ded981_0
+Linking certifi-2026.11.20-pyhd8ed1ab_0
+Linking packaging-26.3-pyhc364b38_0
+Linking yt-dlp-2026.10.26-pyh5ded981_0
+Linking yt-dlp-ejs-0.8.0-pyh5ded981_1
+Linking python-gil-3.12.16-hd8ed1ab_0
+Linking wheel-0.48.0-pyhd8ed1ab_0
+Linking _python_abi3_support-1.0-hd8ed1ab_3
+Linking pip-26.2.2-pyh8b19718_2
+Linking glib-2.90.1-h1d002d9_3
+Linking charset-normalizer-3.5.2-h308a848_0
+Linking libharfbuzz-devel-15.0.0-h03b5201_0
+Linking libpango-devel-1.58.2-h7637d1b_3
+Linking pango-1.58.2-h4350c2a_3
+Linking librsvg-2.62.4-h5506a08_0
+Linking ffmpeg-9.0.2-gpl_h666c9b3_908
+Linking requests-2.34.2-pyhcf101f3_0
+Linking instaloader-4.14.1-pyhd8ed1ab_1
+
+Transaction finished
+
+
+To activate this environment, use:
+
+    micromamba activate D:\aaaa\git\instsum\runtime\setup-v1\env
+
+Or to execute a single command in this environment, use:
+
+    micromamba run -p D:\aaaa\git\instsum\runtime\setup-v1\env mycommand
+
+Processing .\runtime\setup-v1\downloads\gallery_dl-1.32.20-py3-none-any.whl
+Installing collected packages: gallery-dl
+Successfully installed gallery-dl-1.32.20
+List of available languages in "D:\aaaa\git\instsum\runtime\setup-v1\tessdata/" (2):
+eng
+ron
+go: downloading gopkg.in/yaml.v3 v3.0.1
+go: downloading golang.org/x/sync v0.10.0
+go: downloading github.com/corona10/goimagehash v1.1.0
+go: downloading github.com/santhosh-tekuri/jsonschema/v5 v5.3.1
+go: downloading github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+Componentele au fost instalate local. Poti porni start.bat.
+Atentie: modelele, CUDA si procesarea unui reel real nu au fost validate automat.
+Incheiere: 2026-11-21 16:51:22 +02:00; cod: 0

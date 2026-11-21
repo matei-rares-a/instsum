@@ -1,0 +1,13 @@
+Pornire: 2026-11-21 16:52:38 +02:00
+Jurnal: D:\aaaa\git\instsum\logs\instsum-20261121-165238-5c013c2ec0db4f3e8c00b3a6cb56e27b.log
+URL incarcat din start-url.txt.
+Se pregateste configuratia locala din configs\config.yaml...
+Se proceseaza postarea...
+time=2026-11-21T16:52:42.222+02:00 level=WARN msg="partial pipeline stage" stage=asr media=media-1 reason="ffmpeg output is not 16 kHz mono PCM WAV: expected a standard 16 kHz, mono, signed 16-bit PCM WAV file"
+time=2026-11-21T16:52:49.803+02:00 level=WARN msg="partial pipeline stage" stage=ocr media=media-1 reason="parse tesseract TSV for \"out\\\\run-2251928235\\\\media-1\\\\frame_000001.jpg\": empty TSV output"
+time=2026-11-21T16:52:49.831+02:00 level=WARN msg="partial pipeline stage" stage=inference_readiness media="" reason="resolve gpu.device 1 with nvidia-smi: nvidia-smi unavailable: install it and configure its executable/PATH: exec: \"nvidia-smi\": executable file not found in %PATH%"
+time=2026-11-21T16:52:49.832+02:00 level=WARN msg="partial pipeline stage" stage=structure media="" reason="no available model or supporting evidence"
+./out\run-2251928235
+time=2026-11-21T16:52:49.895+02:00 level=WARN msg="incomplete result" output=./out\run-2251928235
+Rezultatul este partial. Verifica avertismentele din jurnal si rezultatul exportat.
+Incheiere: 2026-11-21 16:52:49 +02:00; cod: 2

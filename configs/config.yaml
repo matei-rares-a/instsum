@@ -12,7 +12,7 @@ fetch:
   rate_limit_per_min: 10
   timeout_s: 180
 gpu:
-  device: 0 # Physical NVIDIA-SMI index; check the setup log on multi-GPU systems.
+  device: 1 # Physical NVIDIA-SMI index; check the setup log on multi-GPU systems.
   vram_budget_mb: 9000
   schedule: sequential
   monitor: false # Enable for target-hardware runs; polling is not a hard VRAM cap.
