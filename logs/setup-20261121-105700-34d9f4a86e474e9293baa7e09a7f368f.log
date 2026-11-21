@@ -1,0 +1,8 @@
+Setup experimental - 2026-11-21 10:57:00 +02:00
+Jurnal: D:\aaaa\git\instsum\logs\setup-20261121-105700-34d9f4a86e474e9293baa7e09a7f368f.log
+Fisierele pot contine cai personale. Verifica jurnalul inainte de a-l trimite.
+RAM disponibil aproximativ: 18.15 GiB.
+GPU: NVIDIA GeForce GTX 1650, 4096, 621.24
+GPU: NVIDIA GeForce RTX 3080, 10240, 621.24
+EROARE setup: Primul GPU are 4295 MB; bugetul configurat este 9000 MB.
+Incheiere: 2026-11-21 10:57:01 +02:00; cod: 1
