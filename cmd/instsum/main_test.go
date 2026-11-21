@@ -15,6 +15,19 @@ import (
 )
 
 func TestMain(m *testing.M) {
+	if os.Getenv("INSTSUM_TEST_SETUP_HELPER") == "1" {
+		if strings.EqualFold(filepath.Base(os.Args[0]), "python.exe") {
+			if err := os.WriteFile(os.Args[3], []byte("fixture"), 0600); err != nil {
+				fmt.Fprintln(os.Stderr, err)
+				os.Exit(1)
+			}
+			os.Exit(0)
+		}
+		fmt.Println("arguments:", strings.Join(os.Args[1:], "|"))
+		fmt.Println("tessdata:", os.Getenv("TESSDATA_PREFIX"))
+		fmt.Println("path:", os.Getenv("PATH"))
+		os.Exit(2)
+	}
 	if os.Getenv("INSTSUM_TEST_LAUNCHER_HELPER") == "1" {
 		fmt.Fprintln(os.Stdout, "argument:", os.Args[1])
 		fmt.Fprintln(os.Stderr, "diagnostic from stderr")

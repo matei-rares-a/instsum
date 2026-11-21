@@ -121,3 +121,139 @@ sequential GPU scheduling or RTX 3080 memory budget above.
 Status: implemented and verified with Windows CLI/launcher tests, including the
 real Go build fallback and isolated startup, output and logging failures. Real
 Instagram, real inference and GPU acceptance remain separate live gates.
+
+## Approved Windows first-run setup
+
+Goal: a user with a supported Windows x64 machine and no Go, media tools or
+models installed can run one setup launcher, then use `start.bat` without manual
+PATH editing. Setup is an explicit user action; no downloads or installations
+occur merely by launching `start.bat`. A working Internet connection, sufficient
+free disk, an NVIDIA driver compatible with the selected CUDA runtime and access
+to the upstream artifacts are external prerequisites. Instagram login/access
+and model accuracy cannot be guaranteed by installation.
+
+### Architecture and engines
+
+- Add a double-click `setup.bat` and a PowerShell setup implementation. Install
+  into project-owned directories and set paths for the launched process rather
+  than changing system-wide PATH or other users' installations. Detect Windows
+  architecture, disk space, network/artifact errors and GPU/driver prerequisites.
+  Never replace user files, models or settings silently; make reruns safe.
+- Bootstrap a verified Go toolchain only if required to build the Go CLI.
+  Provision versioned, compatible ffmpeg/ffprobe, yt-dlp, gallery-dl and
+  instaloader, whisper.cpp plus its model, and CPU Tesseract with both `ron` and
+  `eng` language data. Use existing tools only when their versions and required
+  functionality are checked. Preserve the supported download-source/mirror
+  policy; no credentials or cookie contents in logs.
+- Use managed llama.cpp as the working default: provision a compatible CUDA
+  `llama-server`, a verified vision GGUF and its matching projector, with a
+  real model rather than stub output. Configure executable/model paths and
+  managed lifecycle in a temporary setup-generated configuration derived from
+  the main configuration each launch; preserve custom paths and user settings.
+  `start.bat` selects it and receives project-local tool paths.
+- **Ollama vs llama.cpp:** keep llama.cpp as the default because Ollama is not
+  available for live validation and must not be a build/runtime dependency.
+  Do not automatically install or start Ollama. Once available, the existing
+  explicit live configuration remains an optional alternative; switching must
+  not force downloads or destroy another user's server/model.
+- Preserve `allow_cloud: false`, sequential scheduling, 9000 MB target VRAM
+  budget and model unloading policy. OCR runs on CPU to conserve VRAM. The
+  32 GB RAM machine may have only 10-12 GB available; preflight reports actual
+  available resources and gives actionable remediation rather than assuming
+  total RAM or promising that a specific model fits. Download sizes, model
+  licenses, CPU/GPU trade-offs and VRAM polling limitations are explained.
+
+### Safety, milestones and acceptance
+
+1. **Preflight and manifest:** report GPU, RAM, estimated disk requirement and
+   model inventory, with confirmation before downloads. Pin binary hashes;
+   obtain model hashes and repository revision from official source metadata.
+   The latter is not independent author verification. Real compatibility and
+   licensing require target-machine review.
+2. **Provisioning:** create resumable, idempotent project-local setup with a
+   unique diagnostic log, integrity checks, safe extraction, no silent
+   overwrites, safe cleanup and clear errors. Never modify global environment,
+   drivers, third-party services, or existing user configuration without consent.
+3. **Runtime integration:** build the CLI; arrange local executables, language
+   files and models; make the existing launcher use the generated configuration
+   and process-local paths. Ensure managed inference is ready and closed only
+   when owned. Preserve exit codes and partial-result diagnostics.
+4. **Verification and handoff:** use isolated fake artifacts/command fixtures
+   for fresh install, rerun, checksum failure, low disk, missing driver, failed
+   download, interruption, existing settings and paths containing spaces.
+   Run focused Windows tests and a clean-machine test when possible. A genuine
+   full result requires a real local media/model smoke test, then a real
+   accessible reel and RTX 3080 measurements; report these as unverified when
+   hardware, models or access are unavailable, never as a stub success. Update
+   README, DECISIONS and approved requirements with setup, privacy, logging,
+   sizes, troubleshooting and remaining live gates.
+
+Speed/accuracy comparison remains the existing 5/10/15-second benchmark and
+annotated recipe evaluation; setup itself must not pretend dependency checks
+establish model accuracy or guarantee VRAM/RAM compliance.
+
+Status: user approved an experimental implementation to be tried on another
+machine. Hugging Face remains inaccessible here; exact model/projector filenames,
+model hashes, licenses, compatibility, clean installation and inference remain
+unverified. The setup fails with a diagnostic if required metadata cannot be
+selected; it does not invent checksums. Binary archive layouts and hashes for
+llama.cpp and CUDA were checked locally. `ready` indicates that installation
+steps completed, not that real inference, RTX 3080 VRAM or reel accuracy passed.
+Offline fixtures cover launcher selection, configuration and selected error
+paths; a complete clean-machine installation and live pipeline are still needed.
+
+## Reusable Instagram URL for Windows launcher
+
+### Problem and approach
+
+Repeated `start.bat` runs currently wait for an interactive URL even when the
+user is testing the same reel. Add a local, editable `start-url.txt` in the
+repository root as an optional input source. If it contains a non-whitespace
+URL, `scripts/start.ps1` will use that value without prompting; if the file is
+absent or blank, preserve today's prompt. Keep the file out of Git so a user's
+reel URL is not accidentally committed. Do not change Go CLI parsing, setup
+behavior, inference configuration or cloud/local policy.
+
+### Data flow and behavior
+
+`start.bat` -> `scripts/start.ps1` -> read and trim root `start-url.txt` -> use
+the selected URL as the existing single CLI argument -> same logging and exit
+code behavior. A blank/missing file follows the existing console prompt. The
+normal Go fetcher remains responsible for validating that the input is an
+Instagram URL; diagnostics continue to be recorded in the per-run log. The URL
+will naturally appear in local process arguments and may appear in diagnostic
+logs, so document reviewing the log before sharing. Add a brief README
+instruction showing where to paste the URL and how to return to prompting.
+
+### Trade-offs, risks and constraints
+
+- A separate ignored text file is safer and easier to edit than embedding a
+  URL containing `&`, `%` or other special characters into a batch command.
+- Missing/empty file means backward-compatible prompting; a nonempty file
+  skips the prompt and consistently targets the same reel.
+- A stale or malformed stored URL will be rejected by the normal application
+  path; the launcher must not silently fall back to another URL.
+- Preserve the local-only inference default, llama.cpp engine, 9000 MB VRAM
+  budget, setup marker checks, logging, and current setup/no-setup launch paths.
+- No engine or model is changed, so the existing sequential GPU schedule and
+  RTX 3080/available RAM assessment are unaffected.
+
+### Runnable milestones and acceptance
+
+1. Extend Windows launcher selection and tests: a populated file is passed
+   byte-for-byte after trimming surrounding whitespace, the prompt is skipped,
+   an empty/missing file still prompts, and an invalid stored URL reaches the
+   normal CLI validation without being replaced. Exercise special URL
+   characters, local logs, and both setup-ready and legacy paths as appropriate.
+2. Document creating/editing `start-url.txt`, clearing it to restore the prompt,
+   and reviewing logs for privacy. Verify the file is ignored and not altered
+   by setup or launcher runs.
+
+Validation uses the existing focused Windows launcher tests and
+`git diff --check`; no network, Instagram access, model inference, or GPU
+benchmark is required for URL-source behavior. Speed/accuracy benchmarks and
+recipe evaluation do not change because this only removes repeated input.
+
+Status: implemented with a gitignored root URL file, interactive fallback,
+README instructions and Windows launcher fixtures for legacy and setup-ready
+paths. Focused test and diff-check results are recorded in the task response.

@@ -101,6 +101,50 @@ func TestWindowsLauncherLogsOutputAndPreservesURL(t *testing.T) {
 	}
 }
 
+func TestWindowsLauncherUsesSavedURLWithoutPrompt(t *testing.T) {
+	root := launcherDir(t, true)
+	url := "https://www.instagram.com/reel/ABC/?a=1&b=two%20words"
+	if err := os.WriteFile(filepath.Join(root, "start-url.txt"), []byte(" \r\n"+url+"\t\r\n"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	output, code := runLauncher(t, root, "", "INSTSUM_TEST_LAUNCHER_HELPER=1")
+	log := launcherLog(t, root)
+	for _, text := range []string{"argument: " + url, "URL incarcat din start-url.txt."} {
+		if code != 0 || !strings.Contains(output, text) || !strings.Contains(log, text) {
+			t.Fatalf("saved URL: exit=%d, missing %q output=%s log=%s", code, text, output, log)
+		}
+	}
+	if strings.Contains(output, "Lipeste URL-ul") {
+		t.Fatalf("launcher prompted despite saved URL: %s", output)
+	}
+}
+
+func TestWindowsLauncherPromptsWhenSavedURLIsMissingOrBlank(t *testing.T) {
+	for _, tc := range []struct {
+		name string
+		file bool
+	}{
+		{name: "missing"},
+		{name: "blank", file: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			root := launcherDir(t, true)
+			if tc.file {
+				if err := os.WriteFile(filepath.Join(root, "start-url.txt"), []byte(" \r\n\t "), 0600); err != nil {
+					t.Fatal(err)
+				}
+			}
+			url := "https://instagram.com/reel/prompted/?a=1&b=2"
+			output, code := runLauncher(t, root, url, "INSTSUM_TEST_LAUNCHER_HELPER=1")
+			log := launcherLog(t, root)
+			if code != 0 || !strings.Contains(output, "Lipeste URL-ul") ||
+				!strings.Contains(output, "argument: "+url) || !strings.Contains(log, "argument: "+url) {
+				t.Fatalf("prompt fallback: exit=%d output=%s log=%s", code, output, log)
+			}
+		})
+	}
+}
+
 func TestWindowsLauncherBuildsWhenExecutableIsMissing(t *testing.T) {
 	root := launcherDir(t, false)
 	if err := os.MkdirAll(filepath.Join(root, "cmd", "instsum"), 0700); err != nil {
@@ -140,6 +184,7 @@ func TestWindowsLauncherReportsStartupFailures(t *testing.T) {
 		if err := os.WriteFile(filepath.Join(root, "go.mod"), []byte("module local.test/launcher\n\ngo 1.23\n"), 0600); err != nil {
 			t.Fatal(err)
 		}
+
 		output, code := runLauncher(t, root, "https://instagram.com/reel/abc/", "GOWORK=off")
 		log := launcherLog(t, root)
 		if code != 1 || !strings.Contains(log, "Eroare la compilare") || !strings.Contains(output, "Eroare la compilare") {
@@ -184,4 +229,75 @@ func TestWindowsLauncherReportsStartupFailures(t *testing.T) {
 			t.Fatalf("start failure: exit=%d output=%s log=%s", code, output, log)
 		}
 	})
+}
+
+func TestWindowsLauncherUsesReadySetup(t *testing.T) {
+	root := launcherDir(t, true)
+	root, err := filepath.EvalSymlinks(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	runtime := filepath.Join(root, "runtime", "setup-v1")
+	for _, directory := range []string{filepath.Join(runtime, "env"), filepath.Join(root, "configs")} {
+		if err := os.MkdirAll(directory, 0700); err != nil {
+			t.Fatal(err)
+		}
+	}
+	binary, err := os.ReadFile(filepath.Join(root, "instsum.exe"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, file := range []string{filepath.Join(runtime, "instsum.exe"), filepath.Join(runtime, "env", "python.exe")} {
+		if err := os.WriteFile(file, binary, 0700); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for _, file := range []string{filepath.Join(root, "configs", "config.yaml"), filepath.Join(root, "scripts", "setup-config.py")} {
+		if err := os.WriteFile(file, []byte("fixture"), 0600); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if err := os.WriteFile(filepath.Join(runtime, "ready"), []byte("setup-v1"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	url := "https://instagram.com/reel/abc/?a=1&b=2"
+	if err := os.WriteFile(filepath.Join(root, "start-url.txt"), []byte(url+"\r\n"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	output, code := runLauncher(t, root, "", "INSTSUM_TEST_SETUP_HELPER=1")
+	log := launcherLog(t, root)
+	for _, text := range []string{"arguments: --config|", "|" + url, "tessdata: " + filepath.Join(runtime, "tessdata"), filepath.Join(runtime, "env", "Library", "bin"), "cod: 2"} {
+		if code != 2 || !strings.Contains(output, text) || !strings.Contains(log, text) {
+			t.Fatalf("setup path: exit=%d, missing %q output=%s log=%s", code, text, output, log)
+		}
+	}
+	if strings.Contains(output, "Lipeste URL-ul") {
+		t.Fatalf("setup-ready launcher prompted despite saved URL: %s", output)
+	}
+}
+
+func TestWindowsLauncherRejectsIncompleteSetup(t *testing.T) {
+	root := launcherDir(t, true)
+	runtime := filepath.Join(root, "runtime", "setup-v1")
+	if err := os.MkdirAll(runtime, 0700); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(runtime, "ready"), []byte("setup-v1"), 0600); err != nil {
+		t.Fatal(err)
+	}
+	output, code := runLauncher(t, root, "https://instagram.com/reel/abc/")
+	if log := launcherLog(t, root); code != 1 || !strings.Contains(log, "Instalare locala incompleta") {
+		t.Fatalf("incomplete setup: exit=%d output=%s log=%s", code, output, log)
+	}
+}
+
+func TestWindowsSetupHelperFixtures(t *testing.T) {
+	script, err := filepath.Abs(filepath.Join("..", "..", "scripts", "setup_test.ps1"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	cmd := exec.Command("powershell.exe", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", script)
+	if output, err := cmd.CombinedOutput(); err != nil {
+		t.Fatalf("setup helper tests: %v\n%s", err, output)
+	}
 }

@@ -59,9 +59,24 @@ model accuracy, ONNX/CUDA ABI compatibility or peak VRAM.
   not the required real-post evaluation set. Batch, stage cache/resume and
   advanced optimization remain deferred, not implemented.
 * The Windows launcher prompts for a URL and records a separate local diagnostic
-  log per run. It does not change engine configuration or install dependencies.
+  log per run. It does not install dependencies; without the optional setup it
+  retains the existing engine configuration.
   Logs may contain sensitive subprocess diagnostics and require review before
   sharing; the launcher reports log failures rather than pretending to record them.
+* For faster repeated reel testing, `start.bat` reads an optional root
+  `start-url.txt` before prompting. The local file is gitignored to avoid
+  committing a personal URL; missing/blank content preserves the prompt.
+* The experimental Windows setup uses project-local micromamba/conda-forge for
+  media tools, Python and CPU Tesseract, a verified gallery-dl wheel, and official
+  prebuilt Go, CUDA llama.cpp and CPU whisper.cpp binaries. A small Python/PyYAML
+  helper derives a temporary effective YAML from the canonical config at launch;
+  explicit custom paths and environment overrides remain usable. This is setup
+  glue, not an inference sidecar. The launcher uses managed llama.cpp for the
+  default executable; no Ollama service is installed or started.
+* Hugging Face model filenames, revision and SHA-256 are selected from official
+  API metadata at setup time. This checks downloads against the same source, not
+  independent pre-pinned model hashes; compatibility and licenses remain to be
+  checked on the target machine. Conda packages are not fully lockfile-pinned.
 
 ## Validation boundaries
 

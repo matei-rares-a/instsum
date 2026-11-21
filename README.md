@@ -47,12 +47,55 @@ ffmpeg/ffprobe and Tesseract. These checks do not certify live models.
 
 ### Windows launcher
 
-Double-click `start.bat`, paste the Instagram URL and press Enter. The window
-stays open when the run finishes. The launcher uses `instsum.exe` in the project
-root if present; otherwise it requires Go 1.23+ on PATH and builds a temporary
-executable. It uses the existing configuration and does not install dependencies
-or start Ollama. ffmpeg, downloaders, recognition tools and an inference backend
-still need to be configured as described below.
+#### Experimental first-time setup
+
+1. On Windows x64, install a compatible NVIDIA driver first and ensure
+   `nvidia-smi` works. An RTX 3080 with 10 GB VRAM is the target; setup checks
+   the first GPU against the 9000 MB budget. Have Internet access to GitHub,
+   conda-forge, PyPI, Hugging Face and Go's module services.
+2. Double-click `setup.bat`. It reports GPU, available RAM, model sizes and
+   estimated disk space. Review the model licenses and type `DA` to approve the
+   multi-GB download. Setup installs Go, ffmpeg, downloaders, Tesseract,
+   whisper.cpp, CUDA llama-server and models under `runtime/setup-v1`; it does
+   not change system PATH, install drivers or install/start Ollama. Restart
+   `setup.bat` after an error; if a conflicting or incomplete file is reported,
+   inspect it before removing it. Existing configuration is not overwritten.
+3. If setup succeeds, double-click `start.bat`; paste the Instagram URL only
+   when no saved URL is configured below. The window stays open. Instagram
+   access or login may still require separate configuration.
+
+To retest the same reel without entering it every time, create `start-url.txt`
+in the repository root and paste the URL on one line. `start.bat` will use it
+automatically; the file is ignored by Git so the private URL is not committed.
+Delete the file or leave it empty to return to the interactive prompt. A saved
+URL is still validated by the application, and may appear in local diagnostic
+logs, so review logs before sharing them.
+
+Setup writes `logs/setup-*.log`; each run writes `logs/instsum-*.log`. On
+failure, review the newest relevant log before sharing it. Managed llama-server
+may also write `llama-server.log` in the result directory. Logs may contain
+personal paths, URLs or subprocess output: remove sensitive data and never
+share passwords, cookies or tokens.
+
+This installer is **experimental**: it has not been run end-to-end on a clean
+target machine. Hugging Face access was unavailable during development. The
+exact selected model files, licenses, CUDA/driver compatibility, actual VRAM
+use, Instagram fetch and inference quality require validation on that machine.
+Model downloads are verified against SHA-256 values obtained from the official
+metadata for a recorded repository revision, not independently pinned hashes.
+Conda dependencies are resolved by conda-forge rather than fully lockfile-pinned.
+The existing `scripts/download-model.ps1` supports local/mirror sources when
+the setup's official Hugging Face source is unavailable.
+
+After setup, `start.bat` reads `configs/config.yaml` each run and creates a
+temporary effective configuration without modifying it. Default model and
+executable paths point to the local installation; non-default paths are retained.
+When the executable remains the default `llama-server`, setup's launcher enables
+managed-server mode. To use an externally managed server, set a custom executable
+value or `IGX_LLAMACPP_MANAGE_SERVER=false`. Other `IGX_...` overrides remain
+available. Temporary configuration is deleted after the run. Without a completed
+setup, the original launcher behavior remains: use root `instsum.exe`, or build
+temporarily using Go 1.23+ on PATH. `start.bat` never downloads dependencies.
 
 Each invocation writes a separate `logs/instsum-*.log` containing startup
 diagnostics, application output, warnings and exit code; the window prints its
@@ -194,4 +237,5 @@ Real sample acquisition/annotation and quality acceptance remain a live-stage ga
 Model files are configured under `models`. `scripts/download-model.ps1`
 accepts `-Source hf`, `local`, or `mirror-url`, `-From`, and `-Destination`;
 remote sources additionally require a verified `-Sha256`. It refuses to
-overwrite an existing destination. No model is downloaded automatically.
+overwrite an existing destination. Models are downloaded only by an explicit
+download command or an approved `setup.bat` installation.

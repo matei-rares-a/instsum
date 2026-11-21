@@ -49,6 +49,19 @@ The approved Windows launcher accepts an Instagram URL interactively and writes
 per-run local diagnostic logs without changing engine selection or downloading
 dependencies. Logs can contain sensitive subprocess output and must be reviewed
 before sharing. Logging failures must be visible to the user.
+The Windows launcher may also read one optional, local `start-url.txt` from the
+repository root to reuse a test URL without prompting. This file is excluded
+from Git; a missing or blank file preserves the interactive prompt.
+
+The approved experimental Windows first-run setup may download project-local
+tools and models after explicit confirmation, without installing Ollama or
+modifying the system PATH. The user will test it on a separate machine with
+access to the official model sources and provide a reviewed diagnostic log.
+Until that test, artifact availability, model compatibility, real inference and
+the target GPU budget remain unverified. For this experiment, model checksums
+come from the official Hugging Face metadata at the recorded repository
+revision, not from an independently pre-pinned model manifest. The existing
+manual model download script remains the local/mirror alternative.
 
 This is the primary project specification, not a step-by-step script. It is VERY
 IMPORTANT that you:
