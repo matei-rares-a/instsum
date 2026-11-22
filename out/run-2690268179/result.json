@@ -1,0 +1,300 @@
+{
+  "status": "partial",
+  "metadata": {
+    "url": "https://www.instagram.com/reels/Df481Z9MknK/",
+    "author": "COSANZENELE GATESC",
+    "date": "20261118",
+    "caption": "Salvati de acum reteta pentru ca anul acesta promitem sa aveti numai bunatati pe mesele de sarbatori. Ne apucam de treaba?\n\n📝Lista ingrediente: \n- morcovi subtiri (ar fi bine sa fie de aceeasi dimensiune);\n- cateva fasii de bacon; \n- o lingurita de mustar; \n- 2 lingurite de miere; \n- o lingurita de suc de lamaie; \n- patrunjel;\n- sare si piper proaspat macinat; \n\n🧑🏻‍🍳Mod de pregatire: \n\nAlegem morcovi de grosimi cat mai apropiate ca sa se gateasca uniform. Ii curatam de coaja, ii spalam bine si ii punem la fiert in apa cu sare, pana cand furculita intra usor in ei. Mare atentie sa nu fie foarte fierti pentru ca se pot rupe.\n\nIi lasam sa se raceasca, apoi infasuram fiecare morcov in fasii de bacon. Ii aranjam pe o tava si ii bagam direct la cuptor (200 de grade pana cand baconul devine crocant). \n\nIntre timp, pregatim sosul: mustar, miere, suc de lamaie, sare si piper si patrunjel proaspat. \n\nNoi am pregatit si o crema de fasole cu paprika afumata pe care sa punem morcovii. Puteti face si hummus sau un piure de telina coapta. Rezultatul? O bunatate la care nu ai cum sa rezisti. Urmariti Cosanzenele Gatesc pentru mai multe delicii!",
+    "title": "Video by cosanzenele.gatesc",
+    "id": "b332b662efd27e4a",
+    "stats": {
+      "comment_count": 25,
+      "like_count": 7300
+    },
+    "media": [
+      {
+        "id": "media-1",
+        "path": "out\\run-2690268179\\video-download\\download.mp4",
+        "kind": "video",
+        "duration_s": 50.31619,
+        "width": 1080,
+        "height": 1920,
+        "fps": 30,
+        "has_audio": true,
+        "audio_path": "out\\run-2690268179\\media-1\\audio.wav"
+      }
+    ]
+  },
+  "engine": "llamacpp",
+  "engine_mode": "live",
+  "model": "qwen2.5vl-7b",
+  "text_model": "qwen2.5vl-7b",
+  "profile": "recipe",
+  "warnings": [
+    "media-1/asr: ffmpeg output is not 16 kHz mono PCM WAV: expected a standard 16 kHz, mono, signed 16-bit PCM WAV file",
+    "media-1/ocr: parse tesseract TSV for \"out\\\\run-2690268179\\\\media-1\\\\frame_000001.jpg\": empty TSV output",
+    "media-1/vlm: model window does not match requested interval 9.000-19.000",
+    "media-1/vlm: model window does not match requested interval 18.000-28.000",
+    "media-1/vlm: model window does not match requested interval 27.000-37.000",
+    "media-1/vlm: model window does not match requested interval 36.000-46.000",
+    "media-1/vlm: model window does not match requested interval 45.000-50.316",
+    "/structure: timestamp 0.000 is unsupported by evidence timestamps",
+    "GPU memory was not monitored; hardware budget is unverified."
+  ],
+  "stages": [
+    {
+      "name": "fetch",
+      "status": "complete",
+      "engine": "external",
+      "duration_s": 3.9405968
+    },
+    {
+      "name": "normalize",
+      "media_id": "media-1",
+      "status": "complete",
+      "engine": "ffmpeg",
+      "duration_s": 0.1784507
+    },
+    {
+      "name": "asr",
+      "media_id": "media-1",
+      "status": "unavailable",
+      "engine": "whisper-cli",
+      "duration_s": 0.0484203,
+      "reason": "ffmpeg output is not 16 kHz mono PCM WAV: expected a standard 16 kHz, mono, signed 16-bit PCM WAV file"
+    },
+    {
+      "name": "frames",
+      "media_id": "media-1",
+      "status": "complete",
+      "engine": "ffmpeg+goimagehash",
+      "duration_s": 7.8578235
+    },
+    {
+      "name": "ocr",
+      "media_id": "media-1",
+      "status": "unavailable",
+      "engine": "tesseract",
+      "duration_s": 0.2467417,
+      "reason": "parse tesseract TSV for \"out\\\\run-2690268179\\\\media-1\\\\frame_000001.jpg\": empty TSV output"
+    },
+    {
+      "name": "inference_readiness",
+      "status": "complete",
+      "engine": "llamacpp",
+      "duration_s": 12.489753
+    },
+    {
+      "name": "vlm",
+      "media_id": "media-1",
+      "status": "complete",
+      "engine": "llamacpp",
+      "duration_s": 4.1414798
+    },
+    {
+      "name": "vlm",
+      "media_id": "media-1",
+      "status": "failed",
+      "engine": "llamacpp",
+      "duration_s": 4.096611,
+      "reason": "model window does not match requested interval 9.000-19.000"
+    },
+    {
+      "name": "vlm",
+      "media_id": "media-1",
+      "status": "failed",
+      "engine": "llamacpp",
+      "duration_s": 4.0842152,
+      "reason": "model window does not match requested interval 18.000-28.000"
+    },
+    {
+      "name": "vlm",
+      "media_id": "media-1",
+      "status": "failed",
+      "engine": "llamacpp",
+      "duration_s": 3.927831,
+      "reason": "model window does not match requested interval 27.000-37.000"
+    },
+    {
+      "name": "vlm",
+      "media_id": "media-1",
+      "status": "failed",
+      "engine": "llamacpp",
+      "duration_s": 4.169723,
+      "reason": "model window does not match requested interval 36.000-46.000"
+    },
+    {
+      "name": "vlm",
+      "media_id": "media-1",
+      "status": "failed",
+      "engine": "llamacpp",
+      "duration_s": 8.6814918,
+      "reason": "model window does not match requested interval 45.000-50.316"
+    },
+    {
+      "name": "structure",
+      "status": "failed",
+      "engine": "llamacpp",
+      "duration_s": 23.0965471,
+      "reason": "timestamp 0.000 is unsupported by evidence timestamps"
+    },
+    {
+      "name": "server_shutdown",
+      "status": "complete",
+      "engine": "llamacpp",
+      "duration_s": 1.1501547
+    }
+  ],
+  "transcript": [],
+  "ocr": [],
+  "visual_timeline": [
+    {
+      "window": [
+        0,
+        10
+      ],
+      "events": [
+        {
+          "t": 9.83,
+          "action": "peeling",
+          "objects": [
+            "carrots",
+            "peeler"
+          ],
+          "quantities": [
+            "carrots"
+          ],
+          "on_screen_text": "Alegem morcovi de grosimi cat mai apropiate",
+          "estimated": false,
+          "confidence": 0.9
+        }
+      ],
+      "media_id": "media-1",
+      "time_known": true
+    }
+  ],
+  "timeline": [
+    {
+      "start": 0,
+      "end": 0,
+      "text": "Salvati de acum reteta pentru ca anul acesta promitem sa aveti numai bunatati pe mesele de sarbatori. Ne apucam de treaba?\n\n📝Lista ingrediente: \n- morcovi subtiri (ar fi bine sa fie de aceeasi dimensiune);\n- cateva fasii de bacon; \n- o lingurita de mustar; \n- 2 lingurite de miere; \n- o lingurita de suc de lamaie; \n- patrunjel;\n- sare si piper proaspat macinat; \n\n🧑🏻‍🍳Mod de pregatire: \n\nAlegem morcovi de grosimi cat mai apropiate ca sa se gateasca uniform. Ii curatam de coaja, ii spalam bine si ii punem la fiert in apa cu sare, pana cand furculita intra usor in ei. Mare atentie sa nu fie foarte fierti pentru ca se pot rupe.\n\nIi lasam sa se raceasca, apoi infasuram fiecare morcov in fasii de bacon. Ii aranjam pe o tava si ii bagam direct la cuptor (200 de grade pana cand baconul devine crocant). \n\nIntre timp, pregatim sosul: mustar, miere, suc de lamaie, sare si piper si patrunjel proaspat. \n\nNoi am pregatit si o crema de fasole cu paprika afumata pe care sa punem morcovii. Puteti face si hummus sau un piure de telina coapta. Rezultatul? O bunatate la care nu ai cum sa rezisti. Urmariti Cosanzenele Gatesc pentru mai multe delicii!",
+      "source": "caption",
+      "id": "caption",
+      "estimated": false,
+      "time_known": false
+    },
+    {
+      "start": 9.83,
+      "end": 9.83,
+      "text": "peeling; quantities: carrots; visible text: Alegem morcovi de grosimi cat mai apropiate",
+      "source": "visual",
+      "id": "visual-media-1-0-0",
+      "media_id": "media-1",
+      "confidence": 0.9,
+      "estimated": false,
+      "time_known": true
+    }
+  ],
+  "structured_notes": null,
+  "unvalidated_model_output": "{\n  \"equipment\": [],\n  \"ingredients\": [\n    {\n      \"estimated\": false,\n      \"evidence_ids\": [\"caption\"],\n      \"name\": \"morcovi subtiri\",\n      \"quantity\": \"\",\n      \"source\": \"caption\",\n      \"timestamp\": 0.000,\n      \"unit\": \"\"\n    },\n    {\n      \"estimated\": false,\n      \"evidence_ids\": [\"caption\"],\n      \"name\": \"fasii de bacon\",\n      \"quantity\": \"\",\n      \"source\": \"caption\",\n      \"timestamp\": 0.000,\n      \"unit\": \"\"\n    },\n    {\n      \"estimated\": false,\n      \"evidence_ids\": [\"caption\"],\n      \"name\": \"mustar\",\n      \"quantity\": \"1 lingurita\",\n      \"source\": \"caption\",\n      \"timestamp\": 0.000,\n      \"unit\": \"lingurita\"\n    },\n    {\n      \"estimated\": false,\n      \"evidence_ids\": [\"caption\"],\n      \"name\": \"miere\",\n      \"quantity\": \"2 lingurite\",\n      \"source\": \"caption\",\n      \"timestamp\": 0.000,\n      \"unit\": \"lingurite\"\n    },\n    {\n      \"estimated\": false,\n      \"evidence_ids\": [\"caption\"],\n      \"name\": \"suc de lamaie\",\n      \"quantity\": \"1 lingurita\",\n      \"source\": \"caption\",\n      \"timestamp\": 0.000,\n      \"unit\": \"lingurita\"\n    },\n    {\n      \"estimated\": false,\n      \"evidence_ids\": [\"caption\"],\n      \"name\": \"patrunjel\",\n      \"quantity\": \"\",\n      \"source\": \"caption\",\n      \"timestamp\": 0.000,\n      \"unit\": \"\"\n    },\n    {\n      \"estimated\": false,\n      \"evidence_ids\": [\"caption\"],\n      \"name\": \"sare\",\n      \"quantity\": \"\",\n      \"source\": \"caption\",\n      \"timestamp\": 0.000,\n      \"unit\": \"\"\n    },\n    {\n      \"estimated\": false,\n      \"evidence_ids\": [\"caption\"],\n      \"name\": \"piper proaspat\",\n      \"quantity\": \"\",\n      \"source\": \"caption\",\n      \"timestamp\": 0.000,\n      \"unit\": \"\"\n    }\n  ],\n  \"servings\": \"\",\n  \"steps\": [\n    {\n      \"estimated\": false,\n      \"evidence_ids\": [\"caption\"],\n      \"n\": 1,\n      \"reference_frame\": \"\",\n      \"source\": \"caption\",\n      \"t_end\": null,\n      \"t_start\": null,\n      \"text\": \"Alegem morcovi de grosimi cat mai apropiate ca sa se gateasca uniform. Ii curatam de coaja, ii spalam bine si ii punem la fiert in apa cu sare, pana cand furculita intra usor in ei. Mare atentie sa nu fie foarte fierti pentru ca se pot rupe.\",\n      \"media_id\": \"media-1\"\n    },\n    {\n      \"estimated\": false,\n      \"evidence_ids\": [\"caption\"],\n      \"n\": 2,\n      \"reference_frame\": \"\",\n      \"source\": \"caption\",\n      \"t_end\": null,\n      \"t_start\": null,\n      \"text\": \"Ii lasam sa se raceasca, apoi infasuram fiecare morcov in fasii de bacon. Ii aranjam pe o tava si ii bagam direct la cuptor (200 de grade pana cand baconul devine crocant).\",\n      \"media_id\": \"media-1\"\n    },\n    {\n      \"estimated\": false,\n      \"evidence_ids\": [\"caption\"],\n      \"n\": 3,\n      \"reference_frame\": \"\",\n      \"source\": \"caption\",\n      \"t_end\": null,\n      \"t_start\": null,\n      \"text\": \"Intre timp, pregatim sosul: mustar, miere, suc de lamaie, sare si piper si patrunjel proaspat.\",\n      \"media_id\": \"media-1\"\n    },\n    {\n      \"estimated\": false,\n      \"evidence_ids\": [\"caption\"],\n      \"n\": 4,\n      \"reference_frame\": \"\",\n      \"source\": \"caption\",\n      \"t_end\": null,\n      \"t_start\": null,\n      \"text\": \"Noi am pregatit si o crema de fasole cu paprika afumata pe care sa punem morcovii. Puteti face si hummus sau un piure de telina coapta. Rezultatul? O bunatate la care nu ai cum sa rezisti. Urmariti Cosanzenele Gatesc pentru mai multe delicii!\",\n      \"media_id\": \"media-1\"\n    }\n  ],\n  \"tips\": [],\n  \"title\": \"Reteta pentru o buna masa de sarbatori\"\n  ,\"total_time\": \"\"\n}",
+  "unvalidated_windows": [
+    {
+      "media_id": "media-1",
+      "window": [
+        9,
+        19
+      ],
+      "raw_output": "{\n  \"events\": [\n    {\n      \"action\": \"transfer\",\n      \"confidence\": 0.9,\n      \"estimated\": false,\n      \"objects\": [\n        \"carrots\",\n        \"plate\"\n      ],\n      \"on_screen_text\": \"Mare atenție să nu fie foarte fierți\"\n    ,\n      \"quantities\": [\n        \"carrots\",\n        \"plate\"\n      ],\n      \"t\": 18.60\n    }\n  ]\n  , \"window\": [\n    9.83,\n    19.00\n  ]\n}",
+      "error": "model window does not match requested interval 9.000-19.000"
+    },
+    {
+      "media_id": "media-1",
+      "window": [
+        18,
+        28
+      ],
+      "raw_output": "{\n  \"events\": [\n    {\n      \"action\": \"Pouring\",\n      \"confidence\": 0.8,\n      \"estimated\": false,\n      \"objects\": [\n        \"honey\",\n        \"bowl\"\n      ],\n      \"on_screen_text\": \"Între timp, pregătim sosul:\"\n    ,\n      \"quantities\": [\n        \"1\",\n        \"lingurite\"\n      ],\n      \"t\": 27.83\n    }\n  ]\n  , \"window\": [18.60, 28.00]\n}",
+      "error": "model window does not match requested interval 18.000-28.000"
+    },
+    {
+      "media_id": "media-1",
+      "window": [
+        27,
+        37
+      ],
+      "raw_output": "{\n  \"events\": [\n    {\n      \"action\": \"add_spices\",\n      \"confidence\": 0.8,\n      \"estimated\": false,\n      \"objects\": [\n        \"paprika\"\n      ],\n      \"on_screen_text\": \"cu paprika afumată pe care să punem morcovii.\"\n    ,\n      \"quantities\": [\n        \"paprika\"\n      ],\n      \"t\": 36.33\n    }\n  ]\n  , \"window\": [27.17, 37]\n}",
+      "error": "model window does not match requested interval 27.000-37.000"
+    },
+    {
+      "media_id": "media-1",
+      "window": [
+        36,
+        46
+      ],
+      "raw_output": "{\n  \"events\": [\n    {\n      \"action\": \"show\",\n      \"confidence\": 1,\n      \"estimated\": false,\n      \"objects\": [\n        \"morcovii\"\n      ],\n      \"on_screen_text\": \"Rezultatul?\\nO bunătate la care nu ai cum să reziști.\"\n    ,\n      \"quantities\": [\n        \"morcovii\"\n      ],\n      \"t\": 44.80\n    }\n  ]\n  , \"window\": [36.33, 44.80]\n}",
+      "error": "model window does not match requested interval 36.000-46.000"
+    },
+    {
+      "media_id": "media-1",
+      "window": [
+        45,
+        50.31619
+      ],
+      "raw_output": "{\n  \"events\": [\n    {\n      \"action\": \"cutting\",\n      \"confidence\": 0.95,\n      \"estimated\": false,\n      \"objects\": [\n        \"fork\",\n        \"knife\"\n      ],\n      \"on_screen_text\": \"O bunătate la care nu ai cum să reziști.\"\n    ,\n      \"quantities\": [\n        \"1\",\n        \"1\"\n      ],\n      \"t\": 45.00\n    },\n    {\n      \"action\": \"cutting\",\n      \"confidence\": 0.95,\n      \"estimated\": false,\n      \"objects\": [\n        \"fork\",\n        \"knife\"\n      ],\n      \"on_screen_text\": \"O bunătate la care nu ai cum să reziști.\"\n    ,\n      \"quantities\": [\n        \"1\",\n        \"1\"\n      ],\n      \"t\": 46.00\n    },\n    {\n      \"action\": \"cutting\",\n      \"confidence\": 0.95,\n      \"estimated\": false,\n      \"objects\": [\n        \"fork\",\n        \"knife\"\n      ],\n      \"on_screen_text\": \"O bunătate la care nu ai cum să reziști.\"\n    ,\n      \"quantities\": [\n        \"1\",\n        \"1\"\n      ],\n      \"t\": 46.47\n    },\n    {\n      \"action\": \"cutting\",\n      \"confidence\": 0.95,\n      \"estimated\": false,\n      \"objects\": [\n        \"fork\",\n        \"knife\"\n      ],\n      \"on_screen_text\": \"O bunătate la care nu ai cum să reziști.\"\n    ,\n      \"quantities\": [\n        \"1\",\n        \"1\"\n      ],\n      \"t\": 48.40\n    },\n    {\n      \"action\": \"cutting\",\n      \"confidence\": 0.95,\n      \"estimated\": false,\n      \"objects\": [\n        \"fork\",\n        \"knife\"\n      ],\n      \"on_screen_text\": \"O bunătate la care nu ai cum să reziști.\"\n    ,\n      \"quantities\": [\n        \"1\",\n        \"1\"\n      ],\n      \"t\": 49.17\n    },\n    {\n      \"action\": \"cutting\",\n      \"confidence\": 0.95,\n      \"estimated\": false,\n      \"objects\": [\n        \"fork\",\n        \"knife\"\n      ],\n      \"on_screen_text\": \"O bunătate la care nu ai cum să reziști.\"\n    ,\n      \"quantities\": [\n        \"1\",\n        \"1\"\n      ],\n      \"t\": 50.17\n    }\n  ]\n  , \"window\": [45.00, 50.17]\n}",
+      "error": "model window does not match requested interval 45.000-50.316"
+    }
+  ],
+  "reference_frames": [
+    {
+      "path": "reference_01.jpg",
+      "time": 4.766667,
+      "media_id": "media-1",
+      "sharpness": 698.124129901652
+    },
+    {
+      "path": "reference_02.jpg",
+      "time": 8.6,
+      "media_id": "media-1",
+      "sharpness": 923.8856388564126
+    },
+    {
+      "path": "reference_03.jpg",
+      "time": 14.533333,
+      "media_id": "media-1",
+      "sharpness": 358.23803622537685
+    },
+    {
+      "path": "reference_04.jpg",
+      "time": 18.6,
+      "media_id": "media-1",
+      "sharpness": 645.1096974110635
+    },
+    {
+      "path": "reference_05.jpg",
+      "time": 26.366667,
+      "media_id": "media-1",
+      "sharpness": 625.8429971775884
+    },
+    {
+      "path": "reference_06.jpg",
+      "time": 35.3,
+      "media_id": "media-1",
+      "sharpness": 735.614206213869
+    },
+    {
+      "path": "reference_07.jpg",
+      "time": 40.833333,
+      "media_id": "media-1",
+      "sharpness": 682.2214634695731
+    },
+    {
+      "path": "reference_08.jpg",
+      "time": 42.833333,
+      "media_id": "media-1",
+      "sharpness": 727.6520087344708
+    }
+  ],
+  "duration_s": 50.31619,
+  "elapsed_s": 78.2053319,
+  "peak_vram_mb": null
+}

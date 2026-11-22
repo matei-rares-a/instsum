@@ -1,0 +1,18 @@
+Pornire: 2026-11-22 03:27:24 +02:00
+Jurnal: D:\aaaa\git\instsum\logs\instsum-20261122-032724-6a6af317839b4e8b803bf149febc7c00.log
+NVIDIA-SMI: C:\Windows\System32\nvidia-smi.exe
+URL incarcat din start-url.txt.
+Se pregateste configuratia locala din configs\config.yaml...
+Se proceseaza postarea...
+time=2026-11-22T03:27:28.749+02:00 level=WARN msg="partial pipeline stage" stage=asr media=media-1 reason="ffmpeg output is not 16 kHz mono PCM WAV: expected a standard 16 kHz, mono, signed 16-bit PCM WAV file"
+time=2026-11-22T03:27:36.855+02:00 level=WARN msg="partial pipeline stage" stage=ocr media=media-1 reason="parse tesseract TSV for \"out\\\\run-2690268179\\\\media-1\\\\frame_000001.jpg\": empty TSV output"
+time=2026-11-22T03:27:57.583+02:00 level=WARN msg="partial pipeline stage" stage=vlm media=media-1 reason="model window does not match requested interval 9.000-19.000"
+time=2026-11-22T03:28:01.667+02:00 level=WARN msg="partial pipeline stage" stage=vlm media=media-1 reason="model window does not match requested interval 18.000-28.000"
+time=2026-11-22T03:28:05.595+02:00 level=WARN msg="partial pipeline stage" stage=vlm media=media-1 reason="model window does not match requested interval 27.000-37.000"
+time=2026-11-22T03:28:09.765+02:00 level=WARN msg="partial pipeline stage" stage=vlm media=media-1 reason="model window does not match requested interval 36.000-46.000"
+time=2026-11-22T03:28:18.446+02:00 level=WARN msg="partial pipeline stage" stage=vlm media=media-1 reason="model window does not match requested interval 45.000-50.316"
+time=2026-11-22T03:28:41.544+02:00 level=WARN msg="partial pipeline stage" stage=structure media="" reason="timestamp 0.000 is unsupported by evidence timestamps"
+./out\run-2690268179
+time=2026-11-22T03:28:42.767+02:00 level=WARN msg="incomplete result" output=./out\run-2690268179
+Rezultatul este partial. Verifica avertismentele din jurnal si rezultatul exportat.
+Incheiere: 2026-11-22 03:28:42 +02:00; cod: 2
